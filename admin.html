@@ -9,12 +9,19 @@
 </head>
 <body>
   <script>
+  // Verificación simple de login
   if (localStorage.getItem("auth") !== "true") {
     window.location.href = "login.html";
   }
+  
+  // Cerrar sesión después de 1 hora (opcional)
+  setTimeout(() => {
+    localStorage.removeItem("auth");
+  }, 3600000);
 </script>
   <div class="container">
     <h1>🔒 Panel de Administración</h1>
+    <button id="logoutBtn" style="position: absolute; top: 20px; right: 20px; background: #e74c3c;">Cerrar Sesión</button>
 
     <div class="admin-actions">
       <button id="drawWinner">Realizar sorteo ahora</button>
@@ -47,7 +54,12 @@
       <tbody></tbody>
     </table>
   </div>
-
+<script>
+  document.getElementById('logoutBtn').addEventListener('click', function() {
+    localStorage.removeItem('auth');
+    window.location.href = 'login.html';
+  });
+</script>
   <script type="module" src="firebase.js"></script>
   <script type="module" src="admin-script.js"></script>
 </body>

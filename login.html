@@ -81,12 +81,12 @@
         login();
       }
         });
-      // Verificación simple de login
+    // Verificación simple de login
       if (localStorage.getItem("auth") !== "true") {
         window.location.href = "login.html";
       }
       
-      // Cerrar sesión después de 1 hora (opcional)
+    // Cerrar sesión después de 1 hora (opcional)
       setTimeout(() => {
         localStorage.removeItem("auth");
       }, 3600000);
