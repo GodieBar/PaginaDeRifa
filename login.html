@@ -1,4 +1,3 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,6 +11,7 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      margin: 0;
     }
     .login-box {
       background: white;
@@ -19,19 +19,35 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
       text-align: center;
+      width: 300px;
+    }
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
     }
     input {
       display: block;
       margin: 10px auto;
       padding: 10px;
       width: 80%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
     }
     button {
+      background-color: #3498db;
+      color: white;
+      border: none;
       padding: 10px 20px;
+      border-radius: 5px;
       cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #2980b9;
     }
     .error {
       color: red;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -45,23 +61,26 @@
   </div>
 
   <script>
-    const users = [
-      { user: "vendedor1", pass: "clave123" },
-      { user: "dominus", pass: "zero2025" }
-    ];
-
     function login() {
-      const u = document.getElementById("username").value;
-      const p = document.getElementById("password").value;
-      const found = users.find(item => item.user === u && item.pass === p);
-      if (found) {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      
+      // Validación simple para Camilo Perez
+      if (username === "Camilo Perez" && password === "1234") {
         // Guardamos acceso en el navegador
         localStorage.setItem("auth", "true");
         window.location.href = "admin.html";
       } else {
-        document.getElementById("errorMsg").textContent = "Acceso denegado.";
+        document.getElementById("errorMsg").textContent = "Acceso denegado. Usuario o contraseña incorrectos.";
       }
     }
+    
+    // Permitir login con Enter
+    document.getElementById("password").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        login();
+      }
+    });
   </script>
 </body>
 </html>
