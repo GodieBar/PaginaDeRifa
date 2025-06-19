@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="admin-style.css">
 </head>
 <body>
+  <script>
+  if (localStorage.getItem("auth") !== "true") {
+    window.location.href = "login.html";
+  }
+</script>
   <div class="container">
     <h1>🔒 Panel de Administración</h1>
 
