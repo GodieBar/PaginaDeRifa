@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rifa Diaria - Gana hasta 5000 MXN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎉 Rifa Diaria <small>25 MXN por participación</small></h1>
+      <p>¡Hoy puedes ganar entre <strong>3000 y 5000 MXN</strong>!</p>
+      <a href="admin.html" class="admin-link">Panel Admin</a>
+    </header>
+
+    <form id="raffleForm">
+      <input type="text" id="name" placeholder="Nombre completo" required>
+      <input type="text" id="curp" placeholder="CURP" required>
+      <input type="tel" id="phone" placeholder="Teléfono (10 dígitos)" pattern="[0-9]{10}" required>
+      <input type="number" id="number" placeholder="Número (1-100)" min="1" max="100" required>
+      
+      <label class="checkbox">
+        <input type="checkbox" id="terms" required>
+        Acepto términos y condiciones
+      </label>
+      
+      <button type="submit">Participar con 25 MXN</button>
+    </form>
+
+    <div id="winnerSection" class="hidden">
+      <h2>🏆 Ganador del día</h2>
+      <div id="winnerInfo"></div>
+    </div>
+
+    <div class="countdown">
+      <p>Sorteo en: <span id="countdown">17:00:00</span></p>
+    </div>
+
+    <div class="previous-winners">
+      <h3>Últimos ganadores</h3>
+      <ul id="winnerList"></ul>
+    </div>
+  </div>
+
+  <div id="termsModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Términos y Condiciones</h2>
+      <div class="terms-text">
+        <p>1. Participación válida solo para mayores de 18 años.</p>
+        <p>2. El sorteo se realiza diariamente a las 17:00 hrs.</p>
+        <p>3. Premios sujetos a verificación de identidad.</p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>

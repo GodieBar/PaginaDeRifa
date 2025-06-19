@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin - Rifa Diaria</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🔒 Panel de Administración</h1>
+
+    <div class="admin-actions">
+      <button id="drawWinner">Realizar sorteo ahora</button>
+      <button id="exportData">Exportar datos</button>
+      <button id="markAsPaid">Marcar como pagado</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <h3>Participantes hoy</h3>
+        <p id="todayParticipants">0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Premio acumulado</h3>
+        <p id="totalPrize">0 MXN</p>
+      </div>
+    </div>
+
+    <h2>Últimos ganadores</h2>
+    <table id="winnersTable">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Nombre</th>
+          <th>Identificación</th>
+          <th>Premio</th>
+          <th>Pagado</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="admin-script.js"></script>
+</body>
+</html>
