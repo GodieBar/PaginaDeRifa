@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rifa Diaria - Gana hasta 5000 MXN</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <!-- SDK de Mercado Pago -->
   <script src="https://sdk.mercadopago.com/js/v2"></script>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -21,9 +20,8 @@
       <input type="text" id="name" placeholder="Nombre completo" required>
       <input type="text" id="curp" placeholder="CURP" pattern="^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]{2}$" title="CURP inválida. Revisa el formato." required>
       <input type="tel" id="phone" placeholder="Celular (10 dígitos)" pattern="[0-9]{10}" required>
-      <input type="number" id="number" placeholder="Número de 4 cifras (0000-9999)" min="0000" max="9999" required>
+      <input type="number" id="number" placeholder="Número de 4 cifras (0000-9999)" min="0" max="9999" required>
       
-      <!-- Selección de monto -->
       <div class="amount-selection">
         <h3>Selecciona tu participación:</h3>
         <div class="amount-options">
@@ -43,18 +41,40 @@
         Acepto términos y condiciones
       </label>
       
-      <!-- Botón de Mercado Pago -->
       <div id="payment-button" class="hidden"></div>
       <button type="button" id="continueToPayment">Continuar al pago</button>
     </form>
 
-    <!-- Resto de tu HTML permanece igual -->
-    <!-- ... -->
+    <div id="winnerSection" class="hidden">
+      <h2>🏆 Ganador del día</h2>
+      <div id="winnerInfo"></div>
+    </div>
+
+    <div class="countdown">
+      <p>Sorteo en: <span id="countdown">17:00:00</span></p>
+    </div>
+
+    <div class="previous-winners">
+      <h3>Últimos ganadores</h3>
+      <ul id="winnerList"></ul>
+    </div>
   </div>
 
-  <!-- Modal y scripts -->
+  <div id="termsModal" class="modal hidden">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Términos y Condiciones</h2>
+      <div class="terms-text">
+        <p>1. Participación válida solo para mayores de 18 años.</p>
+        <p>2. El sorteo se realiza diariamente a las 17:00 hrs.</p>
+        <p>3. Premios sujetos a verificación de identidad.</p>
+        <p>4. Solo participaciones pagadas serán incluidas en el sorteo.</p>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="firebase.js"></script>
   <script type="module" src="script.js"></script>
   <script src="mercadopago.js"></script>
 </body>
-</html> 
+</html>
