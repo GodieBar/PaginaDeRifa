@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rifa Diaria - Gana hasta 5000 MXN</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <!-- SDK de Mercado Pago -->
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,42 +23,38 @@
       <input type="tel" id="phone" placeholder="Celular (10 dígitos)" pattern="[0-9]{10}" required>
       <input type="number" id="number" placeholder="Número de 4 cifras (0000-9999)" min="0000" max="9999" required>
       
+      <!-- Selección de monto -->
+      <div class="amount-selection">
+        <h3>Selecciona tu participación:</h3>
+        <div class="amount-options">
+          <label>
+            <input type="radio" name="amount" value="20" checked> 
+            <span>20 MXN - 1 número</span>
+          </label>
+          <label>
+            <input type="radio" name="amount" value="100"> 
+            <span>100 MXN - 5 números</span>
+          </label>
+        </div>
+      </div>
+      
       <label class="checkbox">
         <input type="checkbox" id="terms" required>
         Acepto términos y condiciones
       </label>
       
-      <button type="submit">Participar</button>
+      <!-- Botón de Mercado Pago -->
+      <div id="payment-button" class="hidden"></div>
+      <button type="button" id="continueToPayment">Continuar al pago</button>
     </form>
 
-    <div id="winnerSection" class="hidden">
-      <h2>🏆 Ganador del día</h2>
-      <div id="winnerInfo"></div>
-    </div>
-
-    <div class="countdown">
-      <p>Sorteo en: <span id="countdown">17:00:00</span></p>
-    </div>
-
-    <div class="previous-winners">
-      <h3>Últimos ganadores</h3>
-      <ul id="winnerList"></ul>
-    </div>
+    <!-- Resto de tu HTML permanece igual -->
+    <!-- ... -->
   </div>
 
-  <div id="termsModal" class="modal hidden">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Términos y Condiciones</h2>
-      <div class="terms-text">
-        <p>1. Participación válida solo para mayores de 18 años.</p>
-        <p>2. El sorteo se realiza diariamente a las 17:00 hrs.</p>
-        <p>3. Premios sujetos a verificación de identidad.</p>
-      </div>
-    </div>
-  </div>
-
+  <!-- Modal y scripts -->
   <script type="module" src="firebase.js"></script>
   <script type="module" src="script.js"></script>
+  <script src="mercadopago.js"></script>
 </body>
 </html>
