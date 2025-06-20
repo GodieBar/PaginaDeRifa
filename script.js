@@ -113,6 +113,67 @@ function validateCURP(curp) {
   
   return true;
 }
+async function isNumberAvailable(number, date) {
+  try {
+    const q = query(
+      collection(db, "participants"), 
+      where("number", "==", number),
+      where("date", ">=", new Date(date).toISOString().split('T')[0])
+    );
+    const snapshot = await getDocs(q);
+    return snapshot.empty;
+  } catch (error) {
+    console.error("Error verificando número:", error);
+    return false;
+  }
+}
+
+// Y modifica el submit del formulario para usarla:
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  // ... código anterior ...
+  
+  // Verificar disponibilidad del número
+  if (!await isNumberAvailable(number, new Date())) {
+    alert("Este número ya ha sido seleccionado hoy. Por favor elija otro.");
+    return;
+  }
+
+  // ... resto del código ...
+});
+async function showAvailableNumbers() {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const q = query(
+      collection(db, "participants"),
+      where("date", ">=", today)
+    );
+    const snapshot = await getDocs(q);
+    
+    const takenNumbers = snapshot.docs.map(doc => doc.data().number);
+    const availableCount = 10000 - takenNumbers.length;
+    
+    alert(`Hay ${availableCount} números disponibles de 10000.`);
+    
+    // Opcional: Mostrar 5 números aleatorios disponibles
+    if (availableCount > 0) {
+      let suggestions = [];
+      while (suggestions.length < Math.min(5, availableCount)) {
+        const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+        if (!takenNumbers.includes(randomNum) && !suggestions.includes(randomNum)) {
+          suggestions.push(randomNum);
+        }
+      }
+      console.log("Sugerencias de números disponibles:", suggestions);
+    }
+  } catch (error) {
+    console.error("Error obteniendo números disponibles:", error);
+  }
+}
+
+// Agrega un botón para esta función en tu HTML
+<button type="button" onclick="showAvailableNumbers()">Ver números disponibles</button>
 
 // Resto del código permanece igual...
 // [Las funciones loadPreviousWinners, checkDailyWinner, etc. del código original]
