@@ -4,7 +4,7 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 const app = express();
 
-// Configura CORS para desarrollo
+// Configura CORS
 app.use(cors({
   origin: ['http://localhost:5500', 'https://tudominio.com']
 }));
@@ -18,7 +18,7 @@ const db = admin.firestore();
 
 // Configura Mercado Pago
 mercadopago.configure({
-  access_token: 'TEST-123456789012345678901234567890-123456'
+  access_token: 'TU_ACCESS_TOKEN_DE_MERCADO_PAGO'
 });
 
 // Middleware para parsear JSON
