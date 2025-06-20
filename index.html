@@ -20,7 +20,10 @@
       <input type="text" id="name" placeholder="Nombre completo" required>
       <input type="text" id="curp" placeholder="CURP" pattern="^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]{2}$" title="CURP inválida. Revisa el formato." required>
       <input type="tel" id="phone" placeholder="Celular (10 dígitos)" pattern="[0-9]{10}" required>
-      <input type="number" id="number" placeholder="Número de 4 cifras (0000-9999)" min="0000" max="9999" required>
+      <input type="text" id="number" placeholder="Número de 4 cifras (0000-9999)" 
+             pattern="\d{4}" title="Debe ingresar exactamente 4 dígitos" 
+             maxlength="4" required
+             oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
       
       <div class="amount-selection">
         <h3>Selecciona tu participación:</h3>
@@ -41,8 +44,9 @@
         Acepto términos y condiciones
       </label>
       
-      <div id="payment-button" class="hidden"></div>
       <button type="button" id="continueToPayment">Continuar al pago</button>
+      <div id="payment-button" class="hidden"></div>
+      <button type="button" onclick="showAvailableNumbers()">Ver números disponibles</button>
     </form>
 
     <div id="winnerSection" class="hidden">

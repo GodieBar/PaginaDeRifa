@@ -65,9 +65,8 @@
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
       
-      // Validación simple para Camilo Perez
+      // Validación para Camilo Perez
       if (username === "Camilo Perez" && password === "1234") {
-        // Guardamos acceso en el navegador
         localStorage.setItem("auth", "true");
         window.location.href = "admin.html";
       } else {
@@ -80,16 +79,7 @@
       if (event.key === "Enter") {
         login();
       }
-        });
-    // Verificación simple de login
-      if (localStorage.getItem("auth") !== "true") {
-        window.location.href = "login.html";
-      }
-      
-    // Cerrar sesión después de 1 hora (opcional)
-      setTimeout(() => {
-        localStorage.removeItem("auth");
-      }, 3600000);
+    });
   </script>
 </body>
 </html>

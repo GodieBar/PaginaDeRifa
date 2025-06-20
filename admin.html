@@ -9,15 +9,9 @@
 </head>
 <body>
   <script>
-  // Verificación simple de login
   if (localStorage.getItem("auth") !== "true") {
     window.location.href = "login.html";
   }
-  
-  // Cerrar sesión después de 1 hora (opcional)
-  setTimeout(() => {
-    localStorage.removeItem("auth");
-  }, 3600000);
 </script>
   <div class="container">
     <h1>🔒 Panel de Administración</h1>
@@ -46,7 +40,7 @@
         <tr>
           <th>Fecha</th>
           <th>Nombre</th>
-          <th>Identificación</th>
+          <th>Número</th>
           <th>Premio</th>
           <th>Pagado</th>
         </tr>
@@ -54,12 +48,13 @@
       <tbody></tbody>
     </table>
   </div>
-<script>
-  document.getElementById('logoutBtn').addEventListener('click', function() {
-    localStorage.removeItem('auth');
-    window.location.href = 'login.html';
-  });
-</script>
+
+  <script>
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      localStorage.removeItem('auth');
+      window.location.href = 'login.html';
+    });
+  </script>
   <script type="module" src="firebase.js"></script>
   <script type="module" src="admin-script.js"></script>
 </body>

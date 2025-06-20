@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Configuración de Mercado Pago (usa tu public key)
-  const mp = new MercadoPago('APP_USR-12345678-1234-1234-1234-123456789012', {
+  const mp = new MercadoPago('TU_PUBLIC_KEY', {
     locale: 'es-MX'
   });
   
@@ -14,12 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Deshabilitar botón para evitar múltiples clics
     continueBtn.disabled = true;
     continueBtn.textContent = 'Procesando...';
     
     try {
-      // 1. Obtener datos del formulario
       const participant = {
         name: document.getElementById('name').value.trim(),
         curp: document.getElementById('curp').value.trim().toUpperCase(),
@@ -30,46 +27,38 @@ document.addEventListener('DOMContentLoaded', function() {
         paid: false
       };
 
-      // 2. Validación adicional de CURP
       if (!validateCURP(participant.curp)) {
         throw new Error("CURP inválida");
       }
 
-      // 3. Guardar en Firebase (primero sin pago)
       const docRef = await addDoc(collection(db, "participants"), participant);
       
-      // 4. Crear preferencia de pago (simulado - en producción usa tu backend)
-      const preference = {
-        items: [
-          {
-            title: `Participación en rifa - ${participant.name}`,
-            unit_price: parseFloat(participant.amount),
-            quantity: 1,
-            currency_id: "MXN"
-          }
-        ],
-        external_reference: docRef.id, // ID del documento en Firebase
-        notification_url: "https://tusitio.com/webhook", // Configura esto en producción
-        back_urls: {
-          success: "https://tusitio.com/success",
-          failure: "https://tusitio.com/failure",
-          pending: "https://tusitio.com/pending"
+      const response = await fetch('https://tu-backend.com/create-preference', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        auto_return: "approved"
-      };
-
-      // 5. Mostrar botón de pago
+        body: JSON.stringify({
+          amount: participant.amount,
+          description: `Participación en rifa - ${participant.name}`,
+          external_reference: docRef.id
+        })
+      });
+      
+      const preference = await response.json();
+      
       paymentButton.classList.remove('hidden');
       continueBtn.classList.add('hidden');
       
-      // 6. Crear botón de Mercado Pago
       mp.checkout({
-        preference: preference,
+        preference: {
+          id: preference.id
+        },
         render: {
           container: '#payment-button',
           label: 'Pagar con Mercado Pago',
         },
-        autoOpen: true // Abre directamente el checkout
+        autoOpen: true
       });
       
     } catch (error) {
@@ -81,7 +70,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// Función de validación de CURP (repetida por si acaso)
 function validateCURP(curp) {
   const regex = /^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]\d$/;
   return regex.test(curp);

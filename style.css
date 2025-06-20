@@ -1,4 +1,3 @@
-/* Estilos generales */
 body {
   font-family: 'Roboto', sans-serif;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -34,7 +33,6 @@ h1 small {
   margin-top: 5px;
 }
 
-/* Formulario */
 form {
   display: flex;
   flex-direction: column;
@@ -71,7 +69,6 @@ button:hover {
   font-size: 14px;
 }
 
-/* Ganadores */
 #winnerSection {
   margin-top: 30px;
   padding: 20px;
@@ -94,7 +91,6 @@ button:hover {
   border-bottom: 1px solid #eee;
 }
 
-/* Modal */
 .modal {
   position: fixed;
   top: 0;
@@ -136,24 +132,12 @@ button:hover {
   text-decoration: none;
 }
 
-/* Countdown */
 .countdown {
   text-align: center;
   margin: 20px 0;
   font-size: 1.2em;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .container {
-    padding: 20px;
-  }
-  
-  h1 {
-    font-size: 1.5em;
-  }
-}
-/* Estilos para Mercado Pago */
 .amount-selection {
   margin: 20px 0;
   padding: 15px;
@@ -178,11 +162,6 @@ button:hover {
   margin-top: 20px;
 }
 
-.hidden {
-  display: none;
-}
-
-/* Estilo para el botón de Mercado Pago */
 .mercadopago-button {
   padding: 12px 24px;
   font-size: 16px;
@@ -198,16 +177,25 @@ button:hover {
 .mercadopago-button:hover {
   background-color: #0088cc;
 }
-/* Estilo para el input de número */
+
 #number {
-  letter-spacing: 0.5em; /* Para mejor visualización de los 4 dígitos */
+  letter-spacing: 0.5em;
   text-align: center;
   font-family: monospace;
   font-size: 1.2em;
 }
 
-/* Estilo para el botón de números disponibles */
-button[onclick="showAvailableNumbers()"] {
-  background-color: #3498db;
-  margin-top: 10px;
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 1.5em;
+  }
+  
+  .amount-options {
+    flex-direction: column;
+    gap: 10px;
+  }
 }

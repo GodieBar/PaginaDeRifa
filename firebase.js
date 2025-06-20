@@ -11,7 +11,6 @@ import {
   updateDoc,
   doc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "TU_API_KEY",
@@ -24,11 +23,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
 export { 
   db, 
-  auth, 
   collection, 
   addDoc, 
   getDocs, 
@@ -37,6 +34,5 @@ export {
   orderBy, 
   limit,
   updateDoc,
-  doc,
-  signInWithEmailAndPassword 
+  doc
 };

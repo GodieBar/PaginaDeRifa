@@ -27,10 +27,11 @@ async function loadStats() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Participantes de hoy
+  // Participantes de hoy (solo los que han pagado)
   const qParticipants = query(
     collection(db, "participants"),
-    where("date", ">=", today.toISOString())
+    where("date", ">=", today.toISOString()),
+    where("paid", "==", true)
   );
   const participantsSnapshot = await getDocs(qParticipants);
   document.getElementById('todayParticipants').textContent = participantsSnapshot.size;
@@ -59,7 +60,7 @@ async function loadWinners() {
     
     row.insertCell(0).textContent = formatDate(data.date);
     row.insertCell(1).textContent = data.name;
-    row.insertCell(2).textContent = data.curp || data.phone;
+    row.insertCell(2).textContent = data.number; // Mostrar el número ganador
     row.insertCell(3).textContent = `${data.prize} MXN`;
     
     const paidCell = row.insertCell(4);
@@ -115,15 +116,16 @@ async function drawWinner() {
     return;
   }
 
-  // Obtener participantes
+  // Obtener participantes que han pagado
   const qParticipants = query(
     collection(db, "participants"),
-    where("date", ">=", today.toISOString())
+    where("date", ">=", today.toISOString()),
+    where("paid", "==", true)
   );
   const participantsSnapshot = await getDocs(qParticipants);
   
   if (participantsSnapshot.empty) {
-    alert("No hay participantes hoy");
+    alert("No hay participantes válidos hoy (ninguno ha pagado)");
     return;
   }
 
@@ -140,7 +142,7 @@ async function drawWinner() {
     paid: false
   });
 
-  alert(`¡Ganador seleccionado!\n${winner.name}\nPremio: ${prize} MXN`);
+  alert(`¡Ganador seleccionado!\nNombre: ${winner.name}\nNúmero: ${winner.number}\nPremio: ${prize} MXN`);
   loadStats();
   loadWinners();
 }
@@ -155,17 +157,17 @@ async function exportData() {
   let csvContent = "data:text/csv;charset=utf-8,";
   
   // Participantes
-  csvContent += "Participantes\nNombre,CURP,Teléfono,Número,Fecha\n";
+  csvContent += "Participantes\nNombre,CURP,Teléfono,Número,Fecha,Pagado\n";
   participantsSnapshot.forEach(doc => {
     const data = doc.data();
-    csvContent += `${data.name},${data.curp},${data.phone},${data.number},${data.date}\n`;
+    csvContent += `${data.name},${data.curp},${data.phone},${data.number},${data.date},${data.paid ? "Sí" : "No"}\n`;
   });
   
   // Ganadores
-  csvContent += "\nGanadores\nNombre,CURP,Teléfono,Premio,Fecha,Pagado\n";
+  csvContent += "\nGanadores\nNombre,CURP,Teléfono,Número,Premio,Fecha,Pagado\n";
   winnersSnapshot.forEach(doc => {
     const data = doc.data();
-    csvContent += `${data.name},${data.curp},${data.phone},${data.prize},${data.date},${data.paid ? "Sí" : "No"}\n`;
+    csvContent += `${data.name},${data.curp},${data.phone},${data.number},${data.prize},${data.date},${data.paid ? "Sí" : "No"}\n`;
   });
 
   // Descargar
@@ -181,5 +183,3 @@ function formatDate(dateString) {
   const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
   return new Date(dateString).toLocaleDateString('es-MX', options);
 }
-// En admin-script.js, función drawWinner:
-const winningNumber = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
