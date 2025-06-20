@@ -198,3 +198,16 @@ button:hover {
 .mercadopago-button:hover {
   background-color: #0088cc;
 }
+/* Estilo para el input de número */
+#number {
+  letter-spacing: 0.5em; /* Para mejor visualización de los 4 dígitos */
+  text-align: center;
+  font-family: monospace;
+  font-size: 1.2em;
+}
+
+/* Estilo para el botón de números disponibles */
+button[onclick="showAvailableNumbers()"] {
+  background-color: #3498db;
+  margin-top: 10px;
+}

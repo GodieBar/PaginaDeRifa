@@ -172,6 +172,7 @@ async function showAvailableNumbers() {
   }
 }
 
+
 // Agrega un botón para esta función en tu HTML
 <button type="button" onclick="showAvailableNumbers()">Ver números disponibles</button>
 

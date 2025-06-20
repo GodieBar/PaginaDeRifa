@@ -181,3 +181,5 @@ function formatDate(dateString) {
   const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
   return new Date(dateString).toLocaleDateString('es-MX', options);
 }
+// En admin-script.js, función drawWinner:
+const winningNumber = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
