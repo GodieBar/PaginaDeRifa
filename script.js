@@ -11,6 +11,7 @@ const countdownElement = document.getElementById('countdown');
 const termsCheckbox = document.getElementById('terms');
 const termsModal = document.getElementById('termsModal');
 const closeModal = document.querySelector('.close');
+const showNumbersBtn = document.getElementById('showNumbersBtn');
 
 // Mostrar modal de términos
 termsCheckbox.addEventListener('click', (e) => {
@@ -44,6 +45,7 @@ form.addEventListener('submit', async (e) => {
   
   if (!termsCheckbox.checked) {
     alert("Debes aceptar los términos y condiciones");
+    termsModal.classList.remove('hidden');
     return;
   }
 
@@ -76,7 +78,7 @@ form.addEventListener('submit', async (e) => {
   try {
     await addDoc(collection(db, "participants"), participant);
     alert("¡Participación registrada! Ahora procede al pago.");
-    document.getElementById('continueToPayment').click();
+    initMercadoPagoPayment(participant);
   } catch (error) {
     console.error("Error al registrar participación:", error);
     alert("Ocurrió un error al registrar tu participación");
@@ -110,7 +112,7 @@ async function isNumberAvailable(number, date) {
 }
 
 // Mostrar números disponibles
-async function showAvailableNumbers() {
+showNumbersBtn.addEventListener('click', async function() {
   try {
     const today = new Date().toISOString().split('T')[0];
     const q = query(
@@ -122,7 +124,7 @@ async function showAvailableNumbers() {
     const takenNumbers = snapshot.docs.map(doc => doc.data().number);
     const availableCount = 10000 - takenNumbers.length;
     
-    alert(`Hay ${availableCount} números disponibles de 10000.`);
+    let message = `Hay ${availableCount} números disponibles de 10000.`;
     
     // Mostrar 5 números aleatorios disponibles
     if (availableCount > 0) {
@@ -133,12 +135,15 @@ async function showAvailableNumbers() {
           suggestions.push(randomNum);
         }
       }
-      alert("Números sugeridos: " + suggestions.join(", "));
+      message += "\n\nNúmeros sugeridos: " + suggestions.join(", ");
     }
+    
+    alert(message);
   } catch (error) {
     console.error("Error obteniendo números disponibles:", error);
+    alert("Ocurrió un error al obtener los números disponibles");
   }
-}
+});
 
 // Cargar ganadores anteriores
 async function loadPreviousWinners() {

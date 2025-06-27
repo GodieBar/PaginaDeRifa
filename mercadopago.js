@@ -1,54 +1,19 @@
-document.addEventListener('DOMContentLoaded', function() {
+function initMercadoPagoPayment(participant) {
   const mp = new MercadoPago('TU_PUBLIC_KEY', {
     locale: 'es-MX'
   });
   
-  const continueBtn = document.getElementById('continueToPayment');
   const paymentButton = document.getElementById('payment-button');
-  const raffleForm = document.getElementById('raffleForm');
-  
-  continueBtn.addEventListener('click', async function() {
-    if(!raffleForm.checkValidity()) {
-      raffleForm.reportValidity();
-      return;
-    }
-    
-    continueBtn.disabled = true;
-    continueBtn.textContent = 'Procesando...';
-    
-    try {
-      const participant = {
-        name: document.getElementById('name').value.trim(),
-        curp: document.getElementById('curp').value.trim().toUpperCase(),
-        phone: document.getElementById('phone').value.trim(),
-        number: document.getElementById('number').value.padStart(4, '0'),
-        amount: document.querySelector('input[name="amount"]:checked').value,
-        date: new Date().toISOString(),
-        paid: false
-      };
+  const submitBtn = document.getElementById('submitBtn');
 
-      if (!validateCURP(participant.curp)) {
-        throw new Error("CURP inválida");
-      }
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Procesando...';
 
-      const docRef = await addDoc(collection(db, "participants"), participant);
-      
-      const response = await fetch('https://tu-backend.com/create-preference', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: participant.amount,
-          description: `Participación en rifa - ${participant.name}`,
-          external_reference: docRef.id
-        })
-      });
-      
-      const preference = await response.json();
-      
+  // En producción, reemplazar con llamada a tu backend
+  createPreference(participant)
+    .then(preference => {
       paymentButton.classList.remove('hidden');
-      continueBtn.classList.add('hidden');
+      submitBtn.classList.add('hidden');
       
       mp.checkout({
         preference: {
@@ -60,17 +25,35 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         autoOpen: true
       });
-      
-    } catch (error) {
+    })
+    .catch(error => {
       console.error('Error:', error);
       alert(`Error: ${error.message || 'Ocurrió un error al procesar el pago'}`);
-      continueBtn.disabled = false;
-      continueBtn.textContent = 'Continuar al pago';
-    }
-  });
-});
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Participar';
+    });
+}
 
-function validateCURP(curp) {
-  const regex = /^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]\d$/;
-  return regex.test(curp);
+// Esta función simula la creación de la preferencia
+// En producción, deberías hacer una llamada a tu backend
+async function createPreference(participant) {
+  // Simulamos un ID de documento
+  const docId = 'simulatedDocId_' + Date.now();
+  
+  return {
+    id: 'simulatedPrefId_' + Date.now(),
+    items: [{
+      title: `Participación en rifa - ${participant.name}`,
+      unit_price: parseFloat(participant.amount),
+      quantity: 1,
+      currency_id: 'MXN'
+    }],
+    external_reference: docId,
+    back_urls: {
+      success: window.location.href,
+      failure: window.location.href,
+      pending: window.location.href
+    },
+    auto_return: 'approved'
+  };
 }
