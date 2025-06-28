@@ -1,72 +1,93 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rifa Diaria - Gana hasta 5000 MXN</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://sdk.mercadopago.com/js/v2"></script>
-  <link rel="stylesheet" href="style.css">
+  <!-- Configuración básica del documento -->
+  <meta charset="UTF-8"> <!-- Codificación de caracteres -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive design -->
+  <title>Rifa Diaria - Gana hasta 5000 MXN</title> <!-- Título de la página -->
+  
+  <!-- Recursos externos -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> <!-- Fuente Google -->
+  <script src="https://sdk.mercadopago.com/js/v2"></script> <!-- SDK de MercadoPago -->
+  <link rel="stylesheet" href="style.css"> <!-- Hoja de estilos local -->
 </head>
 <body>
+  <!-- Contenedor principal -->
   <div class="container">
+    <!-- Encabezado -->
     <header>
       <h1>🎉 Rifa Diaria <small>Invierte 20 o 100 pesos MXN y entra al sorteo del día</small></h1>
       <p>¡Hoy puedes ganar entre <strong>3000 y 5000 pesos Mexicanos</strong>!</p>
-      <a href="admin.html" class="admin-link">Panel Admin</a>
+      <a href="admin.html" class="admin-link">Panel Admin</a> <!-- Enlace al panel de administración -->
     </header>
 
+    <!-- Formulario de participación -->
     <form id="raffleForm">
+      <!-- Campos de información personal -->
       <input type="text" id="name" placeholder="Nombre completo" required>
       <input type="text" id="curp" placeholder="CURP" pattern="^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]{2}$" title="CURP inválida. Revisa el formato." required>
       <input type="tel" id="phone" placeholder="Celular (10 dígitos)" pattern="[0-9]{10}" required>
-      <input type="text" id="number" placeholder="Número de 4 cifras (0000-9999)" 
-             pattern="\d{4}" title="Debe ingresar exactamente 4 dígitos" 
-             maxlength="4" required
-             oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
       
+      <!-- Selección de monto de participación -->
       <div class="amount-selection">
         <h3>Selecciona tu participación:</h3>
         <div class="amount-options">
           <label>
-            <input type="radio" name="amount" value="20" checked> 
+            <input type="radio" name="amount" value="20" checked onchange="updateNumberInputs(1)"> 
             <span>20 MXN - 1 número</span>
           </label>
           <label>
-            <input type="radio" name="amount" value="100"> 
+            <input type="radio" name="amount" value="100" onchange="updateNumberInputs(5)"> 
             <span>100 MXN - 5 números</span>
           </label>
         </div>
       </div>
       
+      <!-- Contenedor dinámico para números de rifa -->
+      <div class="number-inputs" id="numberInputsContainer">
+        <!-- Los campos de números se generan dinámicamente con JavaScript -->
+        <div class="number-input">
+          <input type="text" name="raffleNumber" placeholder="Número de 4 cifras (0000-9999)" 
+                 pattern="\d{4}" title="Debe ingresar exactamente 4 dígitos" 
+                 maxlength="4" required
+                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
+        </div>
+      </div>
+      
+      <!-- Aceptación de términos -->
       <label class="checkbox">
         <input type="checkbox" id="terms" required>
         Acepto términos y condiciones.
       </label>
       
+      <!-- Botones de acción -->
       <button type="submit" id="submitBtn">Participar</button>
-      <div id="payment-button" class="hidden"></div>
+      <div id="payment-button" class="hidden"></div> <!-- Contenedor para botón de pago (oculto inicialmente) -->
       <button type="button" id="showNumbersBtn">Ver números disponibles</button>
     </form>
 
+    <!-- Sección del ganador (oculta inicialmente) -->
     <div id="winnerSection" class="hidden">
       <h2>🏆 Ganador del día</h2>
-      <div id="winnerInfo"></div>
+      <div id="winnerInfo"></div> <!-- Aquí se mostrará la información del ganador -->
     </div>
 
+    <!-- Contador regresivo para el sorteo -->
     <div class="countdown">
       <p>Sorteo en: <span id="countdown">17:00:00</span></p>
     </div>
 
+    <!-- Listado de ganadores anteriores -->
     <div class="previous-winners">
       <h3>Últimos ganadores</h3>
-      <ul id="winnerList"></ul>
+      <ul id="winnerList"></ul> <!-- Lista que se llenará dinámicamente -->
     </div>
   </div>
 
+  <!-- Modal de términos y condiciones (oculto inicialmente) -->
   <div id="termsModal" class="modal hidden">
     <div class="modal-content">
-      <span class="close">&times;</span>
+      <span class="close">&times;</span> <!-- Botón para cerrar el modal -->
       <h2>Términos y Condiciones</h2>
       <div class="terms-text">
         <p>1. Participación válida solo para mayores de 18 años.</p>
@@ -77,8 +98,38 @@
     </div>
   </div>
 
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="script.js"></script>
-  <script src="mercadopago.js"></script>
+  <!-- Scripts -->
+  <script>
+    /**
+     * Función para actualizar dinámicamente los campos de números de rifa
+     * @param {number} count - Cantidad de campos a mostrar (1 o 5)
+     */
+    function updateNumberInputs(count) {
+      // Obtiene el contenedor de los campos de números
+      const container = document.getElementById('numberInputsContainer');
+      // Limpia cualquier campo existente
+      container.innerHTML = '';
+      
+      // Crea la cantidad especificada de campos de entrada
+      for (let i = 0; i < count; i++) {
+        const div = document.createElement('div');
+        div.className = 'number-input';
+        // HTML para cada campo de número con validaciones
+        div.innerHTML = `
+          <input type="text" name="raffleNumber" placeholder="Número ${i+1} (0000-9999)" 
+                 pattern="\\d{4}" title="Debe ingresar exactamente 4 dígitos" 
+                 maxlength="4" required
+                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
+        `;
+        // Agrega el campo al contenedor
+        container.appendChild(div);
+      }
+    }
+  </script>
+
+  <!-- Scripts externos -->
+  <script type="module" src="firebase.js"></script> <!-- Conexión con Firebase -->
+  <script type="module" src="script.js"></script> <!-- Lógica principal de la aplicación -->
+  <script src="mercadopago.js"></script> <!-- Integración con MercadoPago -->
 </body>
 </html>

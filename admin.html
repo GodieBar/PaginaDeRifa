@@ -3,59 +3,124 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Admin - Rifa Diaria</title>
+  <title>Vendedor de Rifa - Panel Sencillo</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="admin-style.css">
 </head>
 <body>
   <script>
-  if (localStorage.getItem("auth") !== "true") {
-    window.location.href = "login.html";
-  }
-</script>
-  <div class="container">
-    <h1>🔒 Panel de Administración</h1>
-    <button id="logoutBtn" style="position: absolute; top: 20px; right: 20px; background: #e74c3c;">Cerrar Sesión</button>
+    // Verificación simple de autenticación
+    if (localStorage.getItem("auth") !== "true") {
+      window.location.href = "login.html";
+    }
+  </script>
+  
+  <div class="admin-container">
+    <header class="admin-header">
+      <h1><i class="fas fa-ticket-alt"></i> Panel del Vendedor</h1>
+      <button id="logoutBtn" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </header>
 
-    <div class="admin-actions">
-      <button id="drawWinner">Realizar sorteo ahora</button>
-      <button id="exportData">Exportar datos</button>
-      <button id="markAsPaid">Marcar como pagado</button>
-    </div>
-
-    <div class="stats">
+    <div class="stats-cards">
       <div class="stat-card">
-        <h3>Participantes hoy</h3>
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
+        <h3>Participantes Hoy</h3>
         <p id="todayParticipants">0</p>
       </div>
+      
       <div class="stat-card">
-        <h3>Premio acumulado</h3>
-        <p id="totalPrize">0 MXN</p>
+        <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
+        <h3>Total Recaudado</h3>
+        <p id="totalMoney">$0 MXN</p>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+        <h3>Ganador de Hoy</h3>
+        <p id="todayWinner">Por definir</p>
       </div>
     </div>
 
-    <h2>Últimos ganadores</h2>
-    <table id="winnersTable">
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Nombre</th>
-          <th>Número</th>
-          <th>Premio</th>
-          <th>Pagado</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="action-buttons">
+      <button id="drawWinnerBtn" class="btn-primary">
+        <i class="fas fa-random"></i> Realizar Sorteo
+      </button>
+      
+      <button id="registerBtn" class="btn-secondary">
+        <i class="fas fa-user-plus"></i> Registrar Participante
+      </button>
+    </div>
+
+    <div class="recent-participants">
+      <h2><i class="fas fa-list"></i> Últimos Participantes</h2>
+      <div class="participants-table">
+        <table id="participantsTable">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Número</th>
+              <th>Monto</th>
+              <th>Hora</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Datos se llenarán con JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="winner-section" id="winnerSection" style="display: none;">
+      <h2><i class="fas fa-crown"></i> Ganador del Día</h2>
+      <div class="winner-card">
+        <div id="winnerInfo"></div>
+        <button id="markAsPaidBtn" class="btn-success">
+          <i class="fas fa-check-circle"></i> Marcar como Pagado
+        </button>
+      </div>
+    </div>
   </div>
 
-  <script>
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-      localStorage.removeItem('auth');
-      window.location.href = 'login.html';
-    });
-  </script>
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="admin-script.js"></script>
+  <!-- Modal para registro rápido -->
+  <div id="quickRegisterModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2><i class="fas fa-user-plus"></i> Registrar Participante</h2>
+      <form id="quickRegisterForm">
+        <div class="form-group">
+          <label for="quickName"><i class="fas fa-user"></i> Nombre Completo</label>
+          <input type="text" id="quickName" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="quickNumber"><i class="fas fa-hashtag"></i> Número (4 dígitos)</label>
+          <input type="text" id="quickNumber" pattern="\d{4}" maxlength="4" required>
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-money-bill"></i> Monto</label>
+          <div class="amount-options">
+            <label>
+              <input type="radio" name="quickAmount" value="20" checked> 
+              <span>20 MXN - 1 número</span>
+            </label>
+            <label>
+              <input type="radio" name="quickAmount" value="100"> 
+              <span>100 MXN - 5 números</span>
+            </label>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn-primary">
+          <i class="fas fa-save"></i> Guardar Participante
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="admin-script.js"></script>
 </body>
 </html>

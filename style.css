@@ -1,48 +1,99 @@
+/**
+ * Estilos mejorados para la aplicación
+ * Cambios realizados:
+ * - Diseño más consistente
+ * - Mejor responsive design
+ * - Variables CSS para fácil mantenimiento
+ * - Efectos visuales mejorados
+ */
+
 :root {
+  /* Colores principales */
   --primary-color: #3498db;
+  --primary-dark: #2980b9;
   --secondary-color: #2ecc71;
+  --secondary-dark: #27ae60;
   --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --success-color: #2ecc71;
+  
+  /* Colores de texto */
   --text-color: #2c3e50;
-  --light-text: #7f8c8d;
+  --text-light: #7f8c8d;
+  --text-on-primary: #ffffff;
+  
+  /* Fondos */
   --background: #f5f7fa;
   --card-bg: #ffffff;
-  --shadow: 0 5px 15px rgba(0,0,0,0.1);
-  --border-radius: 10px;
+  --input-bg: #f8f9fa;
+  
+  /* Bordes */
+  --border-color: #dfe6e9;
+  --border-radius: 8px;
+  --border-radius-lg: 12px;
+  
+  /* Sombras */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+  
+  /* Espaciado */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  
+  /* Transiciones */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
 }
 
+/* Reset y estilos base */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', sans-serif;
 }
 
 body {
-  background: var(--background);
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--background);
   color: var(--text-color);
   line-height: 1.6;
-  padding: 20px;
+  padding: var(--space-md);
   min-height: 100vh;
 }
 
+/* Contenedor principal */
 .container {
   max-width: 600px;
   margin: 0 auto;
   background: var(--card-bg);
-  padding: 30px;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
+  padding: var(--space-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
   position: relative;
+  animation: fadeIn 0.5s ease-out;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Encabezado */
 header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: var(--space-xl);
+  position: relative;
 }
 
 h1, h2, h3 {
   color: var(--text-color);
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-md);
+  line-height: 1.3;
 }
 
 h1 {
@@ -52,82 +103,117 @@ h1 {
 h1 small {
   display: block;
   font-size: 1rem;
-  color: var(--light-text);
-  margin-top: 5px;
+  color: var(--text-light);
+  margin-top: var(--space-sm);
+  font-weight: normal;
 }
 
+/* Formularios */
 form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: var(--space-md);
 }
 
 input, select, textarea {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
+  padding: var(--space-md);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: 1rem;
+  background-color: var(--input-bg);
+  transition: var(--transition-normal);
 }
 
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+/* Botones */
 button {
   background-color: var(--primary-color);
-  color: white;
-  padding: 12px 20px;
+  color: var(--text-on-primary);
+  padding: var(--space-md) var(--space-lg);
   border: none;
   border-radius: var(--border-radius);
   font-size: 1rem;
   cursor: pointer;
-  transition: opacity 0.3s;
+  transition: var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
 }
 
 button:hover {
-  opacity: 0.9;
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-#payment-button {
-  margin-top: 20px;
+button:active {
+  transform: translateY(0);
 }
 
-.mercadopago-button {
-  padding: 12px 24px;
-  font-size: 16px;
-  background-color: #009ee3;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s;
+button:disabled {
+  background-color: var(--text-light);
+  cursor: not-allowed;
+  transform: none !important;
 }
 
+/* Botones alternativos */
+.button-secondary {
+  background-color: var(--secondary-color);
+}
+
+.button-secondary:hover {
+  background-color: var(--secondary-dark);
+}
+
+.button-danger {
+  background-color: var(--danger-color);
+}
+
+/* Sección de cantidad */
 .amount-selection {
-  margin: 20px 0;
-  padding: 15px;
-  background: #f8f8f8;
+  margin: var(--space-lg) 0;
+  padding: var(--space-md);
+  background: var(--input-bg);
   border-radius: var(--border-radius);
 }
 
 .amount-options {
   display: flex;
-  gap: 20px;
-  margin-top: 10px;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
 }
 
 .amount-options label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
   cursor: pointer;
+  padding: var(--space-sm);
+  border-radius: var(--border-radius);
+  transition: var(--transition-fast);
 }
 
+.amount-options label:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+/* Checkbox términos */
 .checkbox {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: var(--space-sm);
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
+/* Modal */
 .modal {
   position: fixed;
   top: 0;
@@ -139,44 +225,68 @@ button:hover {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition-normal);
+}
+
+.modal.active {
+  opacity: 1;
+  pointer-events: all;
 }
 
 .modal-content {
   background: var(--card-bg);
-  padding: 30px;
-  border-radius: var(--border-radius);
+  padding: var(--space-xl);
+  border-radius: var(--border-radius-lg);
   max-width: 500px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
+  transform: translateY(20px);
+  transition: var(--transition-normal);
+}
+
+.modal.active .modal-content {
+  transform: translateY(0);
 }
 
 .close {
   float: right;
-  font-size: 24px;
+  font-size: 1.5rem;
   cursor: pointer;
+  transition: var(--transition-fast);
 }
 
-.hidden {
-  display: none;
+.close:hover {
+  color: var(--danger-color);
 }
 
-.admin-link {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  color: var(--primary-color);
-  text-decoration: none;
+/* Sección de ganador */
+.winner-section {
+  margin-top: var(--space-xl);
+  padding: var(--space-lg);
+  background: var(--input-bg);
+  border-radius: var(--border-radius);
+  text-align: center;
 }
 
+/* Temporizador */
 .countdown {
   text-align: center;
-  margin: 20px 0;
-  font-size: 1.2em;
+  margin: var(--space-lg) 0;
+  font-size: 1.2rem;
 }
 
+.countdown-timer {
+  font-family: monospace;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+/* Lista de ganadores */
 .previous-winners {
-  margin-top: 30px;
+  margin-top: var(--space-xl);
 }
 
 .previous-winners ul {
@@ -185,21 +295,103 @@ button:hover {
 }
 
 .previous-winners li {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
 }
 
-@media (max-width: 600px) {
+/* Inputs de números */
+.number-inputs {
+  margin: var(--space-md) 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--space-sm);
+}
+
+.number-input input {
+  text-align: center;
+  font-family: monospace;
+  font-size: 1.1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
   .container {
-    padding: 20px;
+    padding: var(--space-lg);
   }
   
   h1 {
-    font-size: 1.5em;
+    font-size: 1.5rem;
   }
   
   .amount-options {
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-sm);
   }
+  
+  .number-inputs {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-md);
+  }
+  
+  .modal-content {
+    padding: var(--space-lg);
+  }
+}
+
+/* Animaciones */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.pulse {
+  animation: pulse 1.5s infinite;
+}
+
+/* Clases utilitarias */
+.hidden {
+  display: none !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-success {
+  color: var(--success-color);
+}
+
+.text-warning {
+  color: var(--warning-color);
+}
+
+.text-danger {
+  color: var(--danger-color);
+}
+
+.mt-1 { margin-top: var(--space-xs); }
+.mt-2 { margin-top: var(--space-sm); }
+.mt-3 { margin-top: var(--space-md); }
+.mt-4 { margin-top: var(--space-lg); }
+.mt-5 { margin-top: var(--space-xl); }
+
+/* Estilos para MercadoPago */
+.mercadopago-button {
+  width: 100%;
+  padding: var(--space-md);
+  font-size: 1rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition-normal);
+}
+
+.mercadopago-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }

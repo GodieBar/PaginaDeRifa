@@ -1,129 +1,281 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ganador del Día - Rifa Diaria</title>
+  <meta name="description" content="Resultado del sorteo diario de la Rifa Diaria">
+  
+  <!-- Preconexión para mejorar rendimiento -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Fuente optimizada -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  
+  <!-- Estilos mejorados -->
   <style>
+    :root {
+      --primary-color: #27ae60;
+      --secondary-color: #2ecc71;
+      --text-color: #2c3e50;
+      --light-text: #7f8c8d;
+      --background: #f5f7fa;
+      --card-bg: #ffffff;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      --border-radius: 15px;
+      --success-color: #27ae60;
+      --warning-color: #f39c12;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Roboto', sans-serif;
-      background: #f5f7fa;
-      margin: 0;
+      background: var(--background);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      padding: 20px;
+      line-height: 1.6;
+      color: var(--text-color);
     }
 
     .winner-container {
-      background: #ffffff;
-      padding: 40px 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
       max-width: 500px;
       width: 100%;
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
-      color: #27ae60;
-      margin-bottom: 20px;
-      font-size: 26px;
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+    }
+
+    .winner-info {
+      margin: 1.5rem 0;
     }
 
     .winner-name {
-      font-size: 24px;
+      font-size: 1.5rem;
       font-weight: bold;
-      margin: 20px 0 10px;
+      margin-bottom: 0.5rem;
+      color: var(--text-color);
     }
 
     .winner-prize {
-      font-size: 28px;
-      color: #e67e22;
+      font-size: 2rem;
       font-weight: bold;
-      margin-bottom: 25px;
+      color: var(--success-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .winner-number {
+      font-size: 1.2rem;
+      color: var(--text-color);
+      background: #f8f9fa;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      display: inline-block;
+      margin: 0.5rem 0;
     }
 
     .winner-date {
-      color: #7f8c8d;
-      font-size: 14px;
+      color: var(--light-text);
+      font-size: 0.9rem;
+      margin-top: 1rem;
     }
 
     .next-raffle {
-      margin-top: 30px;
-      padding-top: 20px;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
       border-top: 1px solid #eee;
-      font-size: 14px;
-      color: #34495e;
+      font-size: 0.9rem;
+      color: var(--light-text);
     }
 
-    @media (max-width: 480px) {
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(0,0,0,.1);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive design mejorado */
+    @media (max-width: 600px) {
       .winner-container {
-        padding: 30px 20px;
+        padding: 1.5rem;
       }
-
+      
       h1 {
-        font-size: 22px;
+        font-size: 1.5rem;
       }
-
-      .winner-prize {
-        font-size: 24px;
-      }
-
+      
       .winner-name {
-        font-size: 20px;
+        font-size: 1.3rem;
       }
+      
+      .winner-prize {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* Estado de error */
+    .error-state {
+      color: #e74c3c;
+      padding: 1rem;
+      background: #fde8e8;
+      border-radius: var(--border-radius);
+      margin: 1rem 0;
     }
   </style>
 </head>
 <body>
   <main class="winner-container" aria-live="polite">
-    <h1>🎉 ¡Felicidades al ganador! 🎉</h1>
-    <div id="winnerDate" class="winner-date">Cargando fecha...</div>
-    <div id="winnerName" class="winner-name">Cargando nombre...</div>
-    <div id="winnerPrize" class="winner-prize">---</div>
-    <div class="next-raffle">
-      Próximo sorteo: <span id="nextRaffle">mañana a las 17:00 hrs</span>
+    <h1>🎉 ¡Ganador del Día! 🎉</h1>
+    
+    <div id="winnerLoading" class="loading"></div>
+    
+    <div id="winnerContent" style="display: none;">
+      <div class="winner-info">
+        <div id="winnerName" class="winner-name"></div>
+        <div id="winnerPrize" class="winner-prize"></div>
+        <div id="winnerNumber" class="winner-number"></div>
+        <div id="winnerDate" class="winner-date"></div>
+      </div>
+      
+      <div class="next-raffle">
+        Próximo sorteo: <span id="nextRaffle">mañana a las 17:00 hrs</span>
+      </div>
+    </div>
+    
+    <div id="errorState" class="error-state" style="display: none;">
+      Error al cargar la información del ganador. Por favor intenta recargar la página.
     </div>
   </main>
 
   <script type="module">
     import { db, getDocs, collection, query, where, orderBy, limit } from './firebase.js';
-
+    
+    // Configuración
+    const CONFIG = {
+      raffleTime: '17:00', // Hora del sorteo
+      refreshInterval: 30000 // Actualizar cada 30 segundos
+    };
+    
+    // Elementos del DOM
+    const DOM = {
+      loading: document.getElementById('winnerLoading'),
+      content: document.getElementById('winnerContent'),
+      error: document.getElementById('errorState'),
+      name: document.getElementById('winnerName'),
+      prize: document.getElementById('winnerPrize'),
+      number: document.getElementById('winnerNumber'),
+      date: document.getElementById('winnerDate'),
+      nextRaffle: document.getElementById('nextRaffle')
+    };
+    
+    // Inicialización
     document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await loadWinner();
+        setupAutoRefresh();
+        updateNextRaffleTime();
+      } catch (error) {
+        showError();
+        console.error("Error inicializando:", error);
+      }
+    });
+    
+    // Cargar ganador
+    async function loadWinner() {
       try {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
+        
         const q = query(
           collection(db, "winners"),
           where("date", ">=", today.toISOString()),
           orderBy("date", "desc"),
           limit(1)
         );
-
+        
         const snapshot = await getDocs(q);
+        
         if (!snapshot.empty) {
-          const winner = snapshot.docs[0].data();
-          displayWinner(winner);
+          displayWinner(snapshot.docs[0].data());
         } else {
           displayNoWinner();
         }
       } catch (error) {
-        console.error("Error al obtener el ganador:", error);
-        displayError();
+        showError();
+        throw error;
       }
-    });
-
+    }
+    
+    // Mostrar ganador
     function displayWinner(winner) {
-      const name = winner.name || "Desconocido";
-      const prize = winner.prize || "0";
-      const date = new Date(winner.date);
-
-      document.getElementById('winnerName').textContent = name;
-      document.getElementById('winnerPrize').textContent = `${prize} MXN`;
-
-      const formattedDate = date.toLocaleDateString('es-MX', {
+      DOM.loading.style.display = 'none';
+      DOM.content.style.display = 'block';
+      DOM.error.style.display = 'none';
+      
+      DOM.name.textContent = winner.name || "Ganador anónimo";
+      DOM.prize.textContent = `${winner.prize ? winner.prize.toLocaleString('es-MX') : '0'} MXN`;
+      DOM.number.textContent = `Número: ${winner.number || '----'}`;
+      
+      const date = winner.date ? new Date(winner.date) : new Date();
+      DOM.date.textContent = formatDate(date);
+    }
+    
+    // Mostrar cuando no hay ganador
+    function displayNoWinner() {
+      DOM.loading.style.display = 'none';
+      DOM.content.style.display = 'block';
+      DOM.error.style.display = 'none';
+      
+      DOM.name.textContent = "Aún no hay ganador hoy";
+      DOM.prize.textContent = "---";
+      DOM.number.textContent = "";
+      DOM.date.textContent = formatDate(new Date());
+    }
+    
+    // Mostrar error
+    function showError() {
+      DOM.loading.style.display = 'none';
+      DOM.content.style.display = 'none';
+      DOM.error.style.display = 'block';
+    }
+    
+    // Formatear fecha
+    function formatDate(date) {
+      return date.toLocaleDateString('es-MX', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -131,20 +283,36 @@
         hour: '2-digit',
         minute: '2-digit'
       });
-
-      document.getElementById('winnerDate').textContent = formattedDate;
     }
-
-    function displayNoWinner() {
-      document.getElementById('winnerName').textContent = "Aún no hay ganador hoy";
-      document.getElementById('winnerPrize').textContent = "--";
-      document.getElementById('winnerDate').textContent = new Date().toLocaleDateString('es-MX');
+    
+    // Actualizar próxima hora de sorteo
+    function updateNextRaffleTime() {
+      const now = new Date();
+      const raffleTime = new Date();
+      const [hours, minutes] = CONFIG.raffleTime.split(':');
+      
+      raffleTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      
+      if (now > raffleTime) {
+        raffleTime.setDate(raffleTime.getDate() + 1);
+      }
+      
+      DOM.nextRaffle.textContent = raffleTime.toLocaleTimeString('es-MX', {
+        hour: '2-digit',
+        minute: '2-digit',
+        weekday: 'long'
+      });
     }
-
-    function displayError() {
-      document.getElementById('winnerName').textContent = "Error al cargar";
-      document.getElementById('winnerPrize').textContent = "--";
-      document.getElementById('winnerDate').textContent = "";
+    
+    // Actualización automática
+    function setupAutoRefresh() {
+      setInterval(async () => {
+        try {
+          await loadWinner();
+        } catch (error) {
+          console.error("Error en actualización automática:", error);
+        }
+      }, CONFIG.refreshInterval);
     }
   </script>
 </body>

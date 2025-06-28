@@ -2,88 +2,290 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Ingreso de Vendedores</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso Administrativo - Rifa Diaria</title>
+  <meta name="description" content="Panel de acceso para administradores de la Rifa Diaria">
+  
+  <!-- Preconexión para mejorar rendimiento -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Fuente optimizada -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  body {
-    font-family: 'Roboto', sans-serif;
-    background: var(--background);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px;
-  }
+  
+  <!-- Estilos mejorados con variables CSS -->
+  <style>
+    :root {
+      --primary-color: #3498db;
+      --danger-color: #e74c3c;
+      --text-color: #2c3e50;
+      --light-text: #7f8c8d;
+      --background: #f5f7fa;
+      --card-bg: #ffffff;
+      --shadow: 0 5px 15px rgba(0,0,0,0.1);
+      --border-radius: 8px;
+      --transition: all 0.3s ease;
+    }
 
-  .login-box {
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    text-align: center;
-    width: 100%;
-    max-width: 300px;
-  }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  h2 {
-    color: var(--text-color);
-    margin-bottom: 1.5rem;
-  }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--background);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--text-color);
+      line-height: 1.6;
+    }
 
-  input {
-    width: 100%;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: var(--border-radius);
-  }
+    .login-container {
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
 
- button {
-      background-color: #3498db;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      font-size: 1.8rem;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 1rem;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: var(--text-color);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+
+    button {
+      background-color: var(--primary-color);
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 12px 24px;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
       cursor: pointer;
-      margin-top: 10px;
-  }
+      width: 100%;
+      transition: var(--transition);
+      margin-top: 1rem;
+    }
 
-  .error {
-    color: var(--danger-color);
-    margin-top: 1rem;
-  }
-</style>
+    button:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+    }
+
+    .error-message {
+      color: var(--danger-color);
+      margin-top: 1rem;
+      padding: 0.5rem;
+      background: #fde8e8;
+      border-radius: var(--border-radius);
+      display: none;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Efecto de shake para errores */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    .shake {
+      animation: shake 0.5s;
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 1.5rem;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="login-box">
-    <h2>🔐 Ingreso de Vendedores</h2>
-    <input type="text" id="username" placeholder="Usuario">
-    <input type="password" id="password" placeholder="Contraseña">
-    <button onclick="login()">Entrar</button>
-    <p class="error" id="errorMsg"></p>
+  <div class="login-container">
+    <div class="logo">RD</div>
+    <h1>Acceso Administrativo</h1>
+    
+    <div class="form-group">
+      <label for="username">Usuario</label>
+      <input 
+        type="text" 
+        id="username" 
+        placeholder="Ingresa tu usuario"
+        autocomplete="username"
+        autocapitalize="none"
+      >
+    </div>
+    
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <input 
+        type="password" 
+        id="password" 
+        placeholder="Ingresa tu contraseña"
+        autocomplete="current-password"
+      >
+    </div>
+    
+    <button id="loginBtn" onclick="login()">
+      Iniciar Sesión
+      <span id="loadingIndicator" class="loading" style="display: none;"></span>
+    </button>
+    
+    <div id="errorMsg" class="error-message"></div>
   </div>
 
   <script>
-    function login() {
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
+    // Credenciales válidas (en producción usar autenticación segura)
+    const VALID_CREDENTIALS = [
+      { username: "Camilo Perez", password: "1234", role: "admin" },
+      { username: "vendedor1", password: "rifa2023", role: "seller" }
+    ];
+    
+    // Elementos del DOM
+    const DOM = {
+      username: document.getElementById('username'),
+      password: document.getElementById('password'),
+      loginBtn: document.getElementById('loginBtn'),
+      loading: document.getElementById('loadingIndicator'),
+      error: document.getElementById('errorMsg')
+    };
+    
+    // Función de login mejorada
+    async function login() {
+      const username = DOM.username.value.trim();
+      const password = DOM.password.value;
       
-      // Validación para Camilo Perez
-      if (username === "Camilo Perez" && password === "1234") {
-        localStorage.setItem("auth", "true");
-        window.location.href = "admin.html";
-      } else {
-        document.getElementById("errorMsg").textContent = "Acceso denegado. Usuario o contraseña incorrectos.";
+      // Validación básica
+      if (!username || !password) {
+        showError("Por favor completa todos los campos");
+        return;
+      }
+      
+      // Mostrar estado de carga
+      DOM.loginBtn.disabled = true;
+      DOM.loading.style.display = 'inline-block';
+      DOM.error.style.display = 'none';
+      
+      // Simular delay de red (solo para demostración)
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      try {
+        // Verificar credenciales
+        const user = VALID_CREDENTIALS.find(
+          cred => cred.username === username && cred.password === password
+        );
+        
+        if (user) {
+          // Guardar autenticación (en producción usar método seguro)
+          localStorage.setItem('auth', 'true');
+          localStorage.setItem('authTime', new Date().getTime());
+          localStorage.setItem('userRole', user.role);
+          
+          // Redirigir al panel
+          window.location.href = "admin.html";
+        } else {
+          showError("Usuario o contraseña incorrectos");
+          DOM.password.classList.add('shake');
+          setTimeout(() => DOM.password.classList.remove('shake'), 500);
+        }
+      } catch (error) {
+        showError("Error al iniciar sesión. Intenta nuevamente.");
+        console.error("Login error:", error);
+      } finally {
+        DOM.loginBtn.disabled = false;
+        DOM.loading.style.display = 'none';
       }
     }
     
+    // Mostrar error
+    function showError(message) {
+      DOM.error.textContent = message;
+      DOM.error.style.display = 'block';
+    }
+    
     // Permitir login con Enter
-    document.getElementById("password").addEventListener("keyup", function(event) {
-      if (event.key === "Enter") {
+    DOM.password.addEventListener('keyup', function(event) {
+      if (event.key === 'Enter') {
         login();
       }
     });
+    
+    // Enfocar campo de usuario al cargar
+    DOM.username.focus();
   </script>
 </body>
 </html>

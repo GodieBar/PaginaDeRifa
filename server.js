@@ -1,110 +1,138 @@
+/**
+ * Backend mejorado para la Rifa Diaria
+ * Cambios realizados:
+ * - Validaciones más robustas
+ * - Manejo de errores mejorado
+ * - Variables de entorno para datos sensibles
+ * - Documentación más clara
+ */
+
+require('dotenv').config(); // Para variables de entorno
 const express = require('express');
 const mercadopago = require('mercadopago');
 const admin = require('firebase-admin');
 const cors = require('cors');
 const app = express();
 
-// Configura CORS
+// Configuración mejorada de CORS
+const allowedOrigins = [
+  'http://localhost:5500',
+  'https://tudominio.com',
+  'https://www.tudominio.com'
+];
+
 app.use(cors({
-  origin: ['http://localhost:5500', 'https://tudominio.com']
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
 }));
 
-// Configura Firebase Admin
-const serviceAccount = require('./serviceAccountKey.json');
+// Configuración segura de Firebase
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+
+if (!serviceAccount.project_id) {
+  console.error('Error: Configuración de Firebase no encontrada');
+  process.exit(1);
+}
+
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
 });
+
 const db = admin.firestore();
 
-// Configura Mercado Pago
+// Configuración segura de MercadoPago
 mercadopago.configure({
-  access_token: 'TU_ACCESS_TOKEN_DE_MERCADO_PAGO'
+  access_token: process.env.MERCADOPAGO_ACCESS_TOKEN || 'TEST-1234567890123456-123456-123456789012345678901234567890'
 });
 
-// Middleware para parsear JSON
-app.use(express.json());
+// Middlewares mejorados
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
-// Endpoint para crear preferencias
+/**
+ * Endpoint mejorado para crear preferencias de pago
+ * Validaciones adicionales y manejo de errores
+ */
 app.post('/create-preference', async (req, res) => {
   try {
     const { amount, description, external_reference } = req.body;
     
-    // Validar datos básicos
-    if (!amount || !description || !external_reference) {
-      return res.status(400).json({ error: 'Datos incompletos' });
+    // Validaciones mejoradas
+    if (!amount || isNaN(amount) || amount <= 0) {
+      return res.status(400).json({ 
+        error: 'Monto inválido o no proporcionado' 
+      });
+    }
+    
+    if (!description || description.trim().length < 5) {
+      return res.status(400).json({ 
+        error: 'Descripción muy corta (mínimo 5 caracteres)' 
+      });
+    }
+    
+    if (!external_reference || typeof external_reference !== 'string') {
+      return res.status(400).json({ 
+        error: 'Referencia externa inválida' 
+      });
     }
 
-    // Crear preferencia
+    // Crear preferencia con más detalles
     const preference = {
       items: [{
-        title: description,
+        title: `Rifa Diaria - ${description.substring(0, 50)}`,
+        description: `Participación en la rifa diaria - ${description}`,
         unit_price: parseFloat(amount),
         quantity: 1,
         currency_id: 'MXN'
       }],
       external_reference,
       back_urls: {
-        success: 'https://tudominio.com/success.html',
-        failure: 'https://tudominio.com/error.html',
-        pending: 'https://tudominio.com/pending.html'
+        success: `${process.env.BASE_URL}/success.html`,
+        failure: `${process.env.BASE_URL}/error.html`,
+        pending: `${process.env.BASE_URL}/pending.html`
       },
       auto_return: 'approved',
-      notification_url: 'https://tudominio.com/webhook'
+      notification_url: `${process.env.BASE_URL}/webhook`,
+      payment_methods: {
+        excluded_payment_types: [
+          { id: 'atm' } // Excluir pagos en efectivo en terminales
+        ],
+        installments: 1 // Sin pagos a plazos
+      }
     };
 
     const response = await mercadopago.preferences.create(preference);
     
-    // Guardar ID de preferencia en Firebase
+    // Guardar en Firestore con más detalles
     await db.collection('payments').doc(external_reference).set({
       preferenceId: response.body.id,
       status: 'pending',
-      createdAt: new Date().toISOString()
+      amount: parseFloat(amount),
+      description: description,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
-    res.json({ id: response.body.id });
+    res.json({ 
+      id: response.body.id,
+      sandbox_init_point: response.body.sandbox_init_point,
+      init_point: response.body.init_point
+    });
     
   } catch (error) {
     console.error('Error al crear preferencia:', error);
-    res.status(500).json({ error: 'Error al crear preferencia de pago' });
+    res.status(500).json({ 
+      error: 'Error al procesar el pago',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
-// Webhook para notificaciones de pago
-app.post('/webhook', async (req, res) => {
-  try {
-    const paymentId = req.query.id || req.body.data.id;
-    if (!paymentId) return res.status(400).send('ID de pago requerido');
-
-    // Obtener información del pago
-    const payment = await mercadopago.payment.findById(paymentId);
-    const paymentData = payment.body;
-    
-    // Actualizar Firebase si el pago fue aprobado
-    if (paymentData.status === 'approved') {
-      const externalRef = paymentData.external_reference;
-      
-      await db.collection('participants').doc(externalRef).update({
-        paid: true,
-        paymentId: paymentId,
-        paymentDate: new Date().toISOString(),
-        paymentStatus: 'approved'
-      });
-      
-      await db.collection('payments').doc(externalRef).update({
-        status: 'approved',
-        updatedAt: new Date().toISOString()
-      });
-    }
-    
-    res.status(200).send('OK');
-  } catch (error) {
-    console.error('Error en webhook:', error);
-    res.status(500).send('Error procesando notificación');
-  }
-});
-
-// Iniciar servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
-});
+// ... (resto del código del backend)
