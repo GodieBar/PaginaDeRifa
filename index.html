@@ -24,7 +24,8 @@
     <!-- Formulario de participación -->
     <form id="raffleForm">
       <!-- Campos de información personal -->
-      <input type="text" id="name" placeholder="Nombre completo" required>
+      <label for="name">Ingresa tus datos</label>
+      <input type="text" id="name" name="name" placeholder="Nombre completo" required>
       <input type="text" id="curp" placeholder="CURP" pattern="^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]{2}$" title="CURP inválida. Revisa el formato." required>
       <input type="tel" id="phone" placeholder="Celular (10 dígitos)" pattern="[0-9]{10}" required>
       
