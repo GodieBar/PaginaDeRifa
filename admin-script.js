@@ -307,3 +307,54 @@ async function markAsPaid() {
     alert("Ocurrió un error al marcar como pagado");
   }
 }
+// Verificar autenticación
+function checkAuth() {
+  const auth = localStorage.getItem('auth');
+  const authTime = localStorage.getItem('authTime');
+  const currentTime = new Date().getTime();
+  const sessionDuration = 10 * 60 * 1000; // 10 minutos en milisegundos
+  
+  if (!auth || auth !== "true" || !authTime || (currentTime - parseInt(authTime)) > sessionDuration) {
+    localStorage.removeItem('auth');
+    localStorage.removeItem('authTime');
+    localStorage.removeItem('userRole');
+    window.location.href = 'login.html';
+  }
+}
+// Configurar event listeners
+function setupEventListeners() {
+  // Cerrar sesión
+  DOM.logoutBtn.addEventListener('click', logout);
+  
+  // ... (resto de tus event listeners)
+}
+
+// Función para cerrar sesión
+function logout() {
+  // Limpiar todos los datos de autenticación
+  localStorage.removeItem('auth');
+  localStorage.removeItem('authTime');
+  localStorage.removeItem('userRole');
+  
+  // Redirigir a la página de login
+  window.location.href = 'login.html';
+}
+// Verificar autenticación
+function checkAuth() {
+  const auth = localStorage.getItem('auth');
+  const authTime = localStorage.getItem('authTime');
+  const currentTime = new Date().getTime();
+  const sessionDuration = 10 * 60 * 1000; // 10 minutos en milisegundos
+  
+  if (!auth || auth !== "true" || !authTime || (currentTime - parseInt(authTime)) > sessionDuration) {
+    logout(); // Usamos la misma función de logout para limpiar
+  }
+}
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', () => {
+  checkAuth();
+  setupEventListeners();
+  loadTodayParticipants();
+  checkTodayWinner();
+});
