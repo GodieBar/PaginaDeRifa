@@ -358,3 +358,15 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTodayParticipants();
   checkTodayWinner();
 });
+// Función para cerrar sesión
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
+}
+// Configurar event listeners
+function setupEventListeners() {
+  // Cerrar sesión
+  document.getElementById('logoutBtn').addEventListener('click', logout);
+  
+  // ... resto de tus event listeners
+}

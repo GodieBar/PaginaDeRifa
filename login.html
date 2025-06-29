@@ -209,84 +209,13 @@
   </div>
 
   <script>
-    // Credenciales válidas (en producción usar autenticación segura)
-    const VALID_CREDENTIALS = [
-      { username: "Camilo Perez", password: "1234", role: "admin" },
-      { username: "vendedor1", password: "rifa2023", role: "seller" }
-    ];
-    
-    // Elementos del DOM
-    const DOM = {
-      username: document.getElementById('username'),
-      password: document.getElementById('password'),
-      loginBtn: document.getElementById('loginBtn'),
-      loading: document.getElementById('loadingIndicator'),
-      error: document.getElementById('errorMsg')
-    };
-    
-    // Función de login mejorada
-    async function login() {
-      const username = DOM.username.value.trim();
-      const password = DOM.password.value;
-      
-      // Validación básica
-      if (!username || !password) {
-        showError("Por favor completa todos los campos");
-        return;
-      }
-      
-      // Mostrar estado de carga
-      DOM.loginBtn.disabled = true;
-      DOM.loading.style.display = 'inline-block';
-      DOM.error.style.display = 'none';
-      
-      // Simular delay de red (solo para demostración)
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      try {
-        // Verificar credenciales
-        const user = VALID_CREDENTIALS.find(
-          cred => cred.username === username && cred.password === password
-        );
-        
-        if (user) {
-          // Guardar autenticación (en producción usar método seguro)
-          localStorage.setItem('auth', 'true');
-          localStorage.setItem('authTime', new Date().getTime());
-          localStorage.setItem('userRole', user.role);
-          
-          // Redirigir al panel
-          window.location.href = "admin.html";
-        } else {
-          showError("Usuario o contraseña incorrectos");
-          DOM.password.classList.add('shake');
-          setTimeout(() => DOM.password.classList.remove('shake'), 500);
-        }
-      } catch (error) {
-        showError("Error al iniciar sesión. Intenta nuevamente.");
-        console.error("Login error:", error);
-      } finally {
-        DOM.loginBtn.disabled = false;
-        DOM.loading.style.display = 'none';
-      }
-    }
-    
-    // Mostrar error
-    function showError(message) {
-      DOM.error.textContent = message;
-      DOM.error.style.display = 'block';
-    }
-    
-    // Permitir login con Enter
-    DOM.password.addEventListener('keyup', function(event) {
-      if (event.key === 'Enter') {
-        login();
-      }
-    });
-    
-    // Enfocar campo de usuario al cargar
-    DOM.username.focus();
-    // Función de login mejorada
+// Credenciales válidas (en producción usar autenticación segura)
+const VALID_CREDENTIALS = [
+  { username: "admin", password: "admin123", role: "admin" },
+  { username: "vendedor", password: "vendedor123", role: "seller" }
+];
+
+// Función de login mejorada
 async function login() {
   const username = DOM.username.value.trim();
   const password = DOM.password.value;
@@ -303,10 +232,10 @@ async function login() {
   DOM.error.style.display = 'none';
   
   // Simular delay de red (solo para demostración)
-  await new Promise(resolve => setTimeout(resolve, 800));
+  await new Promise(resolve => setTimeout(resolve, 500));
   
   try {
-    // Verificar credenciales
+    // Verificar credenciales (case sensitive)
     const user = VALID_CREDENTIALS.find(
       cred => cred.username === username && cred.password === password
     );
@@ -331,7 +260,6 @@ async function login() {
     DOM.loginBtn.disabled = false;
     DOM.loading.style.display = 'none';
   }
-}
-  </script>
+}  </script>
 </body>
 </html>

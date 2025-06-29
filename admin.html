@@ -10,26 +10,22 @@
 </head>
 <body>
   <script>
-  // Verificación de autenticación con expiración
-  function checkAuth() {
+  // Verificación de sesión al cargar
+  function checkSession() {
     const auth = localStorage.getItem("auth");
     const authTime = localStorage.getItem("authTime");
-    const currentTime = new Date().getTime();
-    const sessionDuration = 10 * 60 * 1000; // 10 minutos en milisegundos
+    const sessionDuration = 10 * 60 * 1000; // 10 minutos
     
-    if (auth !== "true" || !authTime || (currentTime - parseInt(authTime)) > sessionDuration) {
-      localStorage.removeItem("auth");
-      localStorage.removeItem("authTime");
-      localStorage.removeItem("userRole");
+    if (!auth || auth !== "true" || !authTime || 
+        (Date.now() - parseInt(authTime)) > sessionDuration) {
+      localStorage.clear();
       window.location.href = "login.html";
     }
   }
   
-  // Verificar al cargar
-  checkAuth();
-  
-  // Verificar periódicamente cada minuto
-  setInterval(checkAuth, 60000);
+  // Verificar sesión cada minuto
+  checkSession();
+  setInterval(checkSession, 60000);
 </script>  
   <div class="admin-container">
     <header class="admin-header">
