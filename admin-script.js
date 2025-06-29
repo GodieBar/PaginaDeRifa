@@ -1,12 +1,3 @@
-/**
- * Script para el panel del vendedor - Versión Simplificada
- * Funcionalidades básicas:
- * 1. Registrar participantes rápidamente
- * 2. Realizar sorteo cuando sea la hora
- * 3. Ver lista de participantes
- * 4. Marcar ganador como pagado
- */
-
 import { 
   db, collection, addDoc, getDocs, 
   query, where, orderBy, limit, updateDoc, doc,
@@ -37,58 +28,48 @@ let selectedWinnerId = null;
 let todayParticipantsCount = 0;
 let todayParticipantsAmount = 0;
 
-// Inicialización
-document.addEventListener('DOMContentLoaded', () => {
-  checkAuth();
-  setupEventListeners();
-  loadTodayParticipants();
-  checkTodayWinner();
-});
+// Función para cerrar sesión
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
+}
 
 // Verificar autenticación
 function checkAuth() {
   const auth = localStorage.getItem('auth');
-  if (!auth) {
-    window.location.href = 'login.html';
+  const authTime = localStorage.getItem('authTime');
+  const currentTime = new Date().getTime();
+  const sessionDuration = 10 * 60 * 1000; // 10 minutos
+  
+  if (!auth || auth !== "true" || !authTime || (currentTime - parseInt(authTime)) > sessionDuration) {
+    logout();
   }
 }
 
 // Configurar event listeners
 function setupEventListeners() {
-  // Cerrar sesión
-  DOM.logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('auth');
-    window.location.href = 'login.html';
-  });
-  
-  // Registrar participante
+  DOM.logoutBtn.addEventListener('click', logout);
   DOM.registerBtn.addEventListener('click', () => {
     DOM.quickRegisterModal.style.display = 'flex';
     DOM.quickName.focus();
   });
   
-  // Cerrar modal
   DOM.closeModal.addEventListener('click', () => {
     DOM.quickRegisterModal.style.display = 'none';
   });
   
-  // Cerrar modal al hacer clic fuera
   window.addEventListener('click', (e) => {
     if (e.target === DOM.quickRegisterModal) {
       DOM.quickRegisterModal.style.display = 'none';
     }
   });
   
-  // Formulario rápido de registro
   DOM.quickRegisterForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     await registerParticipant();
   });
   
-  // Realizar sorteo
   DOM.drawWinnerBtn.addEventListener('click', drawWinner);
-  
-  // Marcar como pagado
   DOM.markAsPaidBtn.addEventListener('click', markAsPaid);
 }
 
@@ -103,7 +84,6 @@ async function loadTodayParticipants() {
     orderBy("date", "desc")
   );
   
-  // Actualización en tiempo real
   onSnapshot(q, (snapshot) => {
     todayParticipantsCount = 0;
     todayParticipantsAmount = 0;
@@ -114,14 +94,12 @@ async function loadTodayParticipants() {
       todayParticipantsCount++;
       todayParticipantsAmount += parseInt(data.amount);
       
-      // Formatear fecha
       const date = data.date.toDate ? data.date.toDate() : new Date(data.date);
       const timeString = date.toLocaleTimeString('es-MX', {
         hour: '2-digit',
         minute: '2-digit'
       });
       
-      // Agregar a la tabla
       const row = DOM.participantsTable.insertRow();
       row.innerHTML = `
         <td>${data.name}</td>
@@ -131,7 +109,6 @@ async function loadTodayParticipants() {
       `;
     });
     
-    // Actualizar estadísticas
     DOM.todayParticipants.textContent = todayParticipantsCount;
     DOM.totalMoney.textContent = `$${todayParticipantsAmount} MXN`;
   });
@@ -144,7 +121,6 @@ async function registerParticipant() {
     const number = DOM.quickNumber.value.padStart(4, '0');
     const amount = document.querySelector('input[name="quickAmount"]:checked').value;
     
-    // Validaciones básicas
     if (!name || name.length < 3) {
       alert("Por favor ingresa un nombre válido (mínimo 3 letras)");
       return;
@@ -154,8 +130,7 @@ async function registerParticipant() {
       alert("Por favor ingresa un número de 4 dígitos");
       return;
     }
-    
-    // Crear objeto participante
+
     const participant = {
       name: name,
       number: number,
@@ -164,14 +139,10 @@ async function registerParticipant() {
       paid: false
     };
     
-    // Guardar en Firebase
     await addDoc(collection(db, "participants"), participant);
     
-    // Limpiar formulario
     DOM.quickRegisterForm.reset();
     DOM.quickRegisterModal.style.display = 'none';
-    
-    // Mostrar mensaje de éxito
     alert("Participante registrado exitosamente");
     
   } catch (error) {
@@ -208,7 +179,6 @@ async function drawWinner() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
-  // Verificar si ya hay ganador hoy
   const qCheck = query(
     collection(db, "winners"),
     where("date", ">=", today.toISOString()),
@@ -221,7 +191,6 @@ async function drawWinner() {
     return;
   }
   
-  // Obtener participantes de hoy que han pagado
   const qParticipants = query(
     collection(db, "participants"),
     where("date", ">=", today.toISOString())
@@ -234,7 +203,6 @@ async function drawWinner() {
     return;
   }
   
-  // Seleccionar ganador aleatorio
   const participants = participantsSnapshot.docs.map(doc => ({
     id: doc.id,
     ...doc.data()
@@ -244,7 +212,6 @@ async function drawWinner() {
   const winner = participants[winnerIndex];
   const prize = calculatePrize(participants.length);
   
-  // Registrar ganador
   const winnerRef = await addDoc(collection(db, "winners"), {
     ...winner,
     prize: prize,
@@ -254,23 +221,21 @@ async function drawWinner() {
   
   selectedWinnerId = winnerRef.id;
   
-  // Mostrar resultado
   showWinner({
     ...winner,
     prize: prize
   });
   
-  // Deshabilitar botón de sorteo
   DOM.drawWinnerBtn.disabled = true;
   DOM.drawWinnerBtn.textContent = "Sorteo Realizado";
   
   alert(`¡Ganador seleccionado!\n\nNombre: ${winner.name}\nNúmero: ${winner.number}\nPremio: $${prize} MXN`);
 }
 
-// Calcular premio basado en participantes
+// Calcular premio
 function calculatePrize(participantCount) {
   const basePrize = 3000;
-  const extra = Math.min(participantCount * 20, 2000); // Máximo $2000 extra
+  const extra = Math.min(participantCount * 20, 2000);
   return basePrize + extra;
 }
 
@@ -307,49 +272,6 @@ async function markAsPaid() {
     alert("Ocurrió un error al marcar como pagado");
   }
 }
-// Verificar autenticación
-function checkAuth() {
-  const auth = localStorage.getItem('auth');
-  const authTime = localStorage.getItem('authTime');
-  const currentTime = new Date().getTime();
-  const sessionDuration = 10 * 60 * 1000; // 10 minutos en milisegundos
-  
-  if (!auth || auth !== "true" || !authTime || (currentTime - parseInt(authTime)) > sessionDuration) {
-    localStorage.removeItem('auth');
-    localStorage.removeItem('authTime');
-    localStorage.removeItem('userRole');
-    window.location.href = 'login.html';
-  }
-}
-// Configurar event listeners
-function setupEventListeners() {
-  // Cerrar sesión
-  DOM.logoutBtn.addEventListener('click', logout);
-  
-  // ... (resto de tus event listeners)
-}
-
-// Función para cerrar sesión
-function logout() {
-  // Limpiar todos los datos de autenticación
-  localStorage.removeItem('auth');
-  localStorage.removeItem('authTime');
-  localStorage.removeItem('userRole');
-  
-  // Redirigir a la página de login
-  window.location.href = 'login.html';
-}
-// Verificar autenticación
-function checkAuth() {
-  const auth = localStorage.getItem('auth');
-  const authTime = localStorage.getItem('authTime');
-  const currentTime = new Date().getTime();
-  const sessionDuration = 10 * 60 * 1000; // 10 minutos en milisegundos
-  
-  if (!auth || auth !== "true" || !authTime || (currentTime - parseInt(authTime)) > sessionDuration) {
-    logout(); // Usamos la misma función de logout para limpiar
-  }
-}
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -358,15 +280,3 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTodayParticipants();
   checkTodayWinner();
 });
-// Función para cerrar sesión
-function logout() {
-  localStorage.clear();
-  window.location.href = "login.html";
-}
-// Configurar event listeners
-function setupEventListeners() {
-  // Cerrar sesión
-  document.getElementById('logoutBtn').addEventListener('click', logout);
-  
-  // ... resto de tus event listeners
-}
