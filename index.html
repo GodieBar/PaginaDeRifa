@@ -1,136 +1,280 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- Configuración básica del documento -->
-  <meta charset="UTF-8"> <!-- Codificación de caracteres -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive design -->
-  <title>Rifas Diaria</title> <!-- Título de la página -->
-
-  <!-- Recursos externos -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> <!-- Fuente Google -->
-  <script src="https://sdk.mercadopago.com/js/v2"></script> <!-- SDK de MercadoPago -->
-  <link rel="stylesheet" href="style.css"> <!-- Hoja de estilos local -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Participa en nuestra rifa diaria y gana premios de hasta $5,000 MXN">
+  <title>Rifa Diaria | Participa y Gana Premios</title>
+  
+  <!-- Preconexiones para mejor performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Contenedor principal -->
-  <div class="container">
-    <!-- Encabezado -->
-    <header>
-      <h1>🎉 Rifa Diaria <small>Invierte 20 o 100 pesos MXN y entra al sorteo del día</small></h1>
-      <p>¡Hoy puedes ganar entre <strong>3000 y 5000 pesos Mexicanos</strong>!</p>
-      <a href="admin.html" class="admin-link">Panel de Vendedor</a> <!-- Enlace al panel de administración -->
+  <div class="app-container">
+    <!-- Header principal -->
+    <header class="main-header" aria-label="Encabezado principal">
+      <div class="header-content">
+        <div class="logo-container">
+          <i class="fas fa-ticket-alt logo-icon"></i>
+          <h1 class="logo-text">Rifa<span>Diaria</span></h1>
+        </div>
+        <nav class="admin-nav">
+          <a href="admin.html" class="admin-link" aria-label="Panel de administración">
+            <i class="fas fa-user-shield"></i> Panel Vendedor
+          </a>
+        </nav>
+      </div>
     </header>
 
+    <!-- Hero Section -->
+    <section class="hero" aria-label="Información principal">
+      <div class="hero-content">
+        <h2 class="hero-title">¡Gana hasta <span>$5,000 MXN</span> hoy!</h2>
+        <p class="hero-subtitle">Participa con solo $20 o $100 MXN</p>
+        <div class="countdown-container">
+          <p class="countdown-text">Próximo sorteo en:</p>
+          <div class="countdown-timer" id="countdown">
+            <span class="countdown-digit">17</span>:
+            <span class="countdown-digit">00</span>:
+            <span class="countdown-digit">00</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Formulario de participación -->
-    <form id="raffleForm">
-      <!-- Campos de información personal -->
-      <label for="name">Ingresa tus datos</label>
-      <input type="text" id="name" name="name" placeholder="Nombre completo" required>
-      <input type="text" id="curp" placeholder="CURP" pattern="^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]{2}$" title="CURP inválida. Revisa el formato." required>
-      <input type="tel" id="phone" placeholder="Celular (10 dígitos)" pattern="[0-9]{10}" required>
-      
-      <!-- Selección de monto de participación -->
-      <div class="amount-selection">
-        <h3>Selecciona tu participación:</h3>
-        <div class="amount-options">
-          <label>
-            <input type="radio" name="amount" value="20" checked onchange="updateNumberInputs(1)"> 
-            <span>20 MXN - 1 número</span>
-          </label>
-          <label>
-            <input type="radio" name="amount" value="100" onchange="updateNumberInputs(5)"> 
-            <span>100 MXN - 5 números</span>
-          </label>
+    <main class="main-content">
+      <section class="participation-form" aria-label="Formulario de participación">
+        <h2 class="section-title">Participa en la rifa</h2>
+        
+        <form id="raffleForm" class="form-container" novalidate>
+          <!-- Datos personales -->
+          <fieldset class="form-fieldset">
+            <legend class="fieldset-legend">Tus datos personales</legend>
+            
+            <div class="form-group">
+              <label for="name" class="form-label">Nombre completo</label>
+              <input type="text" id="name" name="name" class="form-input" 
+                     placeholder="Ej. Juan Pérez López" required
+                     aria-required="true">
+              <span class="input-icon"><i class="fas fa-user"></i></span>
+            </div>
+            
+            <div class="form-group">
+              <label for="curp" class="form-label">CURP</label>
+              <input type="text" id="curp" name="curp" class="form-input"
+                     pattern="^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]{2}$"
+                     placeholder="Ej. PEAJ800101HDFLRN01" required
+                     aria-required="true">
+              <span class="input-icon"><i class="fas fa-id-card"></i></span>
+              <small class="form-hint">Formato: 4 letras, 6 números, H/M, 5 letras, 2 alfanuméricos</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="phone" class="form-label">Teléfono</label>
+              <input type="tel" id="phone" name="phone" class="form-input"
+                     pattern="[0-9]{10}" placeholder="Ej. 5512345678" required
+                     aria-required="true">
+              <span class="input-icon"><i class="fas fa-mobile-alt"></i></span>
+            </div>
+          </fieldset>
+
+          <!-- Selección de participación -->
+          <fieldset class="form-fieldset">
+            <legend class="fieldset-legend">Tipo de participación</legend>
+            
+            <div class="amount-selection">
+              <div class="amount-options">
+                <label class="amount-option">
+                  <input type="radio" name="amount" value="20" checked class="amount-radio">
+                  <div class="option-card">
+                    <span class="option-amount">$20 MXN</span>
+                    <span class="option-detail">1 número</span>
+                    <span class="option-badge">Popular</span>
+                  </div>
+                </label>
+                
+                <label class="amount-option">
+                  <input type="radio" name="amount" value="100" class="amount-radio">
+                  <div class="option-card">
+                    <span class="option-amount">$100 MXN</span>
+                    <span class="option-detail">5 números</span>
+                    <span class="option-badge">Mejor chance</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+            
+            <div class="number-inputs-container" id="numberInputsContainer">
+              <!-- Los inputs se generan dinámicamente -->
+            </div>
+          </fieldset>
+
+          <!-- Términos y condiciones -->
+          <div class="terms-container">
+            <label class="terms-checkbox">
+              <input type="checkbox" id="terms" name="terms" required
+                     aria-required="true">
+              <span class="checkmark"></span>
+              <span class="terms-text">
+                Acepto los <a href="#" class="terms-link" id="termsLink">términos y condiciones</a>
+              </span>
+            </label>
+          </div>
+
+          <!-- Botones -->
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+              <span class="btn-text">Participar ahora</span>
+              <i class="fas fa-arrow-right btn-icon"></i>
+            </button>
+            
+            <button type="button" class="btn btn-secondary" id="showNumbersBtn">
+              <i class="fas fa-search btn-icon"></i>
+              <span class="btn-text">Ver números disponibles</span>
+            </button>
+            
+            <div id="payment-button" class="mercado-pago-container hidden"></div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Sección de ganadores -->
+      <section class="winners-section" aria-label="Ganadores anteriores">
+        <h2 class="section-title">Últimos ganadores</h2>
+        <div class="winners-container">
+          <div class="winners-carousel" id="winnerList">
+            <!-- Contenido dinámico -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <i class="fas fa-ticket-alt"></i>
+          <span>RifaDiaria</span>
+        </div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Términos y condiciones</a>
+          <a href="#" class="footer-link">Política de privacidad</a>
+          <a href="#" class="footer-link">Contacto</a>
+        </div>
+        <div class="footer-social">
+          <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-link" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
         </div>
       </div>
-      
-      <!-- Contenedor dinámico para números de rifa -->
-      <div class="number-inputs" id="numberInputsContainer">
-        <!-- Los campos de números se generan dinámicamente con JavaScript -->
-        <div class="number-input">
-          <input type="text" name="raffleNumber" placeholder="Número de 4 cifras (0000-9999)" 
-                 pattern="\d{4}" title="Debe ingresar exactamente 4 dígitos" 
-                 maxlength="4" required
-                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
-        </div>
+      <div class="footer-copyright">
+        <p>&copy; 2023 RifaDiaria. Todos los derechos reservados.</p>
       </div>
-      
-      <!-- Aceptación de términos -->
-      <label class="checkbox">
-        <input type="checkbox" id="terms" required>
-        Acepto términos y condiciones.
-      </label>
-      
-      <!-- Botones de acción -->
-      <button type="submit" id="submitBtn">Participar</button>
-      <div id="payment-button" class="hidden"></div> <!-- Contenedor para botón de pago (oculto inicialmente) -->
-      <button type="button" id="showNumbersBtn">Ver números disponibles</button>
-    </form>
-
-    <!-- Sección del ganador (oculta inicialmente) -->
-    <div id="winnerSection" class="hidden">
-      <h2>🏆 Ganador del día</h2>
-      <div id="winnerInfo"></div> <!-- Aquí se mostrará la información del ganador -->
-    </div>
-
-    <!-- Contador regresivo para el sorteo -->
-    <div class="countdown">
-      <p>Sorteo en: <span id="countdown">17:00:00</span></p>
-    </div>
-
-    <!-- Listado de ganadores anteriores -->
-    <div class="previous-winners">
-      <h3>Últimos ganadores</h3>
-      <ul id="winnerList"></ul> <!-- Lista que se llenará dinámicamente -->
-    </div>
+    </footer>
   </div>
 
-  <!-- Modal de términos y condiciones (oculto inicialmente) -->
-  <div id="termsModal" class="modal hidden">
-    <div class="modal-content">
-      <span class="close">&times;</span> <!-- Botón para cerrar el modal -->
-      <h2>Términos y Condiciones</h2>
-      <div class="terms-text">
-        <p>1. Participación válida solo para mayores de 18 años.</p>
-        <p>2. El sorteo se realiza diariamente a las 17:00 hrs.</p>
-        <p>3. Premios sujetos a verificación de identidad.</p>
-        <p>4. Solo participaciones pagadas serán incluidas en el sorteo.</p>
+  <!-- Modal de términos -->
+  <div class="modal" id="termsModal" role="dialog" aria-modal="true" aria-labelledby="termsModalTitle" hidden>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title" id="termsModalTitle">Términos y condiciones</h2>
+        <button class="modal-close" id="modalClose" aria-label="Cerrar modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-content">
+        <div class="terms-content">
+          <article class="terms-article">
+            <h3>1. Participación</h3>
+            <p>Válida solo para mayores de 18 años. Cada participación equivale a un número de 4 dígitos.</p>
+          </article>
+          <article class="terms-article">
+            <h3>2. Sorteos</h3>
+            <p>Se realizan diariamente a las 17:00 hrs. El ganador se selecciona aleatoriamente.</p>
+          </article>
+          <article class="terms-article">
+            <h3>3. Premios</h3>
+            <p>El premio base es de $3,000 MXN y puede aumentar según el número de participantes.</p>
+          </article>
+          <article class="terms-article">
+            <h3>4. Pagos</h3>
+            <p>Solo participaciones pagadas serán incluidas en el sorteo.</p>
+          </article>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-accept" id="acceptTerms">Aceptar términos</button>
       </div>
     </div>
   </div>
 
   <!-- Scripts -->
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  <script type="module" src="js/firebase.js"></script>
+  <script type="module" src="js/script.js"></script>
   <script>
-    /**
-     * Función para actualizar dinámicamente los campos de números de rifa
-     * @param {number} count - Cantidad de campos a mostrar (1 o 5)
-     */
+    // Función para actualizar inputs de números
     function updateNumberInputs(count) {
-      // Obtiene el contenedor de los campos de números
       const container = document.getElementById('numberInputsContainer');
-      // Limpia cualquier campo existente
       container.innerHTML = '';
       
-      // Crea la cantidad especificada de campos de entrada
       for (let i = 0; i < count; i++) {
-        const div = document.createElement('div');
-        div.className = 'number-input';
-        // HTML para cada campo de número con validaciones
-        div.innerHTML = `
-          <input type="text" name="raffleNumber" placeholder="Número ${i+1} (0000-9999)" 
-                 pattern="\\d{4}" title="Debe ingresar exactamente 4 dígitos" 
-                 maxlength="4" required
-                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)">
+        const group = document.createElement('div');
+        group.className = 'form-group number-group';
+        group.innerHTML = `
+          <label class="form-label">Número ${i+1}</label>
+          <div class="number-input-container">
+            <input type="text" name="raffleNumber" class="form-input number-input"
+                   pattern="\\d{4}" maxlength="4" required
+                   placeholder="0000" aria-label="Número de rifa ${i+1}">
+            <span class="input-icon"><i class="fas fa-hashtag"></i></span>
+          </div>
         `;
-        // Agrega el campo al contenedor
-        container.appendChild(div);
+        container.appendChild(group);
       }
     }
-  </script>
 
-  <!-- Scripts externos -->
-  <script type="module" src="firebase.js"></script> <!-- Conexión con Firebase -->
-  <script type="module" src="script.js"></script> <!-- Lógica principal de la aplicación -->
-  <script src="mercadopago.js"></script> <!-- Integración con MercadoPago -->
+    // Inicializar con 1 input
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNumberInputs(1);
+      
+      // Event listeners para radios
+      document.querySelectorAll('input[name="amount"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          updateNumberInputs(e.target.value === '20' ? 1 : 5);
+        });
+      });
+      
+      // Modal de términos
+      const termsLink = document.getElementById('termsLink');
+      const termsModal = document.getElementById('termsModal');
+      const modalClose = document.getElementById('modalClose');
+      const modalOverlay = document.getElementById('modalOverlay');
+      
+      termsLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        termsModal.hidden = false;
+        document.body.style.overflow = 'hidden';
+      });
+      
+      const closeModal = () => {
+        termsModal.hidden = true;
+        document.body.style.overflow = '';
+      };
+      
+      modalClose.addEventListener('click', closeModal);
+      modalOverlay.addEventListener('click', closeModal);
+    });
+  </script>
 </body>
 </html>

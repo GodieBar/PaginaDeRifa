@@ -146,3 +146,4 @@ function collectFormData() {
 }
 
 // ... (resto de las mejoras en el frontend)
+
