@@ -1,129 +1,131 @@
 /**
  * Página de Rifa - Sistema Mejorado
- * Autor: GodieBar (optimizado por IA)
- * - Números del 0000 al 9999 (sin repeticiones).
- * - Selección aleatoria de 5 números al participar.
- * - Cronómetro hasta las 17:00:00.
- * - Redirección a página del ganador.
+ * - Números únicos entre participantes y en cada selección.
+ * - Validación completa del formulario.
+ * - Redirección correcta al ganador.
  */
 
-// Configuración
-const TOTAL_NUMBERS = 10000; // Números del 0000 al 9999
-const NUMBERS_TO_SELECT = 5;  // Números asignados por participante
-const DRAW_TIME = "17:00:00"; // Hora del sorteo (5:00 PM)
+const TOTAL_NUMBERS = 10000;
+const NUMBERS_TO_SELECT = 5;
+const DRAW_TIME = "17:00:00";
 
-// Variables globales
-let availableNumbers = [];    // Números disponibles (0000-9999)
-let selectedNumbers = [];     // Números ya seleccionados
-let participants = [];        // Participantes registrados
+let allNumbers = Array.from({length: TOTAL_NUMBERS}, (_, i) => i.toString().padStart(4, '0'));
+let usedNumbers = new Set();
+let participants = [];
 
-// Inicializar al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
-    initializeNumbers();      // Generar números disponibles
-    loadParticipants();       // Cargar datos guardados
-    startCountdown();         // Iniciar cronómetro
-
-    // Eventos
-    document.getElementById('participateBtn').addEventListener('click', participate);
+    loadParticipants();
+    startCountdown();
+    setupNumberInputs();
+    
+    document.getElementById('participateBtn').addEventListener('click', handleParticipation);
     document.getElementById('viewNumbersBtn').addEventListener('click', showAvailableNumbers);
 });
 
-/**
- * Genera los 10,000 números iniciales (0000-9999).
- */
-function initializeNumbers() {
-    for (let i = 0; i < TOTAL_NUMBERS; i++) {
-        availableNumbers.push(i.toString().padStart(4, '0')); // Formato 0000
-    }
-    console.log("Números inicializados:", availableNumbers.length);
-}
-
-/**
- * Carga participantes desde localStorage.
- */
-function loadParticipants() {
-    const storedData = localStorage.getItem('participants');
-    if (storedData) {
-        participants = JSON.parse(storedData);
-        // Actualizar números seleccionados
-        selectedNumbers = participants.flatMap(p => p.numbers);
-        console.log("Participantes cargados:", participants.length);
+function setupNumberInputs() {
+    const container = document.getElementById('numbersContainer');
+    container.innerHTML = '';
+    
+    for (let i = 1; i <= NUMBERS_TO_SELECT; i++) {
+        container.innerHTML += `
+            <div class="number-input">
+                <label>Número ${i}</label>
+                <input type="text" class="number-input" maxlength="4" pattern="\\d{4}" 
+                       placeholder="0000" required>
+            </div>
+        `;
     }
 }
 
-/**
- * Selecciona 5 números aleatorios para el participante.
- */
-function selectRandomNumbers() {
-    const available = availableNumbers.filter(num => !selectedNumbers.includes(num));
-    if (available.length < NUMBERS_TO_SELECT) {
-        alert("¡No hay suficientes números disponibles!");
-        return null;
-    }
-
-    const shuffled = [...available].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, NUMBERS_TO_SELECT);
-}
-
-/**
- * Procesa la participación (asigna números y redirige).
- */
-function participate() {
+function handleParticipation() {
     const name = document.getElementById('participantName').value.trim();
+    const numberInputs = document.querySelectorAll('.number-input');
+    const numbers = [];
+    const errors = [];
+
+    // Validar nombre
     if (!name) {
-        alert("Por favor, ingresa tu nombre.");
+        errors.push("Por favor ingresa tu nombre");
+    }
+
+    // Validar números
+    const tempUsed = new Set();
+    numberInputs.forEach(input => {
+        const num = input.value.padStart(4, '0');
+        
+        if (!/^\d{4}$/.test(num)) {
+            errors.push("Todos los números deben ser de 4 dígitos");
+            return;
+        }
+        
+        if (usedNumbers.has(num)) {
+            errors.push(`El número ${num} ya fue seleccionado por otro participante`);
+            return;
+        }
+        
+        if (tempUsed.has(num)) {
+            errors.push(`No puedes repetir el número ${num} en tu selección`);
+            return;
+        }
+        
+        tempUsed.add(num);
+        numbers.push(num);
+    });
+
+    // Mostrar errores o proceder
+    if (errors.length > 0) {
+        alert("Errores:\n" + errors.join("\n"));
         return;
     }
 
-    const numbers = selectRandomNumbers();
-    if (!numbers) return;
-
-    // Registrar participante
+    // Registrar participación
     participants.push({ name, numbers });
-    selectedNumbers.push(...numbers);
+    numbers.forEach(num => usedNumbers.add(num));
     localStorage.setItem('participants', JSON.stringify(participants));
+    localStorage.setItem('lastWinner', JSON.stringify({ name, numbers }));
 
-    // Redirigir a winner.html (simulado aquí)
-    window.location.href = "winner.html"; // Cambia a tu URL real
+    // Redireccionar
+    window.location.href = "winner.html";
 }
 
-/**
- * Muestra números disponibles (en consola para prueba).
- */
 function showAvailableNumbers() {
-    const available = availableNumbers.filter(num => !selectedNumbers.includes(num));
-    console.log("Números disponibles:", available);
-    alert(`Hay ${available.length} números disponibles. Ver la consola para detalles.`);
+    const available = allNumbers.filter(num => !usedNumbers.has(num));
+    const count = available.length;
+    alert(`Números disponibles: ${count}\n\nEjemplos:\n${
+        available.slice(0, 5).join(', ')}${count > 5 ? '...' : ''}`);
 }
 
-/**
- * Cronómetro regresivo hasta las 17:00:00.
- */
+function loadParticipants() {
+    const stored = localStorage.getItem('participants');
+    if (stored) {
+        participants = JSON.parse(stored);
+        participants.forEach(p => p.numbers.forEach(n => usedNumbers.add(n)));
+    }
+}
+
 function startCountdown() {
-    const countdownElement = document.getElementById('countdown');
-    if (!countdownElement) return;
+    const element = document.getElementById('countdown');
+    if (!element) return;
 
-    function updateCountdown() {
+    function update() {
         const now = new Date();
-        const today = new Date(now.toDateString());
-        const drawTime = new Date(today.toDateString() + ' ' + DRAW_TIME);
-
-        // Si ya pasó la hora, mostrar "00:00:00"
-        if (now >= drawTime) {
-            countdownElement.textContent = "00:00:00";
+        const target = new Date(now.toDateString() + ' ' + DRAW_TIME);
+        
+        if (now >= target) {
+            element.textContent = "00:00:00";
             return;
         }
 
-        const diff = drawTime - now;
-        const hours = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
-        const minutes = Math.floor((diff / (1000 * 60)) % 60).toString().padStart(2, '0');
-        const seconds = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
+        const diff = target - now;
+        const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+        const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+        const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
 
-        countdownElement.textContent = `${hours}:${minutes}:${seconds}`;
+        element.textContent = `${h}:${m}:${s}`;
     }
 
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+    update();
+    setInterval(update, 1000);
 }
 // Cerrar modal al hacer clic en "Aceptar" o la X
 document.getElementById('acceptTerms').addEventListener('click', closeModal);
