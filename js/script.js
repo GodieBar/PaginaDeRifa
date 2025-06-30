@@ -1,179 +1,129 @@
 /**
- * Página de Rifa - Script Principal
- * Autor: GodieBar (mejorado por IA)
- * Descripción: Sistema de rifa donde los participantes compran boletos y se elige un ganador aleatorio.
- * Mejoras:
- * - Sorteo ponderado (más boletos = más probabilidad).
- * - Eliminar participantes individuales.
- * - Mensajes de error/éxito en HTML.
- * - Comentarios detallados.
+ * Página de Rifa - Sistema Mejorado
+ * Autor: GodieBar (optimizado por IA)
+ * - Números del 0000 al 9999 (sin repeticiones).
+ * - Selección aleatoria de 5 números al participar.
+ * - Cronómetro hasta las 17:00:00.
+ * - Redirección a página del ganador.
  */
 
+// Configuración
+const TOTAL_NUMBERS = 10000; // Números del 0000 al 9999
+const NUMBERS_TO_SELECT = 5;  // Números asignados por participante
+const DRAW_TIME = "17:00:00"; // Hora del sorteo (5:00 PM)
+
 // Variables globales
-let participants = []; // Array para almacenar los participantes
-const MAX_TICKETS = 1000; // Límite máximo de boletos por participante (ajustable)
+let availableNumbers = [];    // Números disponibles (0000-9999)
+let selectedNumbers = [];     // Números ya seleccionados
+let participants = [];        // Participantes registrados
 
-// Esperar a que el DOM esté listo
-document.addEventListener('DOMContentLoaded', function () {
-    loadParticipants(); // Cargar participantes al iniciar
-    updateParticipantsTable(); // Actualizar la tabla
+// Inicializar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    initializeNumbers();      // Generar números disponibles
+    loadParticipants();       // Cargar datos guardados
+    startCountdown();         // Iniciar cronómetro
 
-    // Evento para agregar participante
-    document.getElementById('addParticipant').addEventListener('click', addParticipant);
-
-    // Evento para sortear
-    document.getElementById('drawWinner').addEventListener('click', drawWinner);
-
-    // Evento para borrar todos los datos
-    document.getElementById('clearData').addEventListener('click', clearData);
+    // Eventos
+    document.getElementById('participateBtn').addEventListener('click', participate);
+    document.getElementById('viewNumbersBtn').addEventListener('click', showAvailableNumbers);
 });
 
 /**
+ * Genera los 10,000 números iniciales (0000-9999).
+ */
+function initializeNumbers() {
+    for (let i = 0; i < TOTAL_NUMBERS; i++) {
+        availableNumbers.push(i.toString().padStart(4, '0')); // Formato 0000
+    }
+    console.log("Números inicializados:", availableNumbers.length);
+}
+
+/**
  * Carga participantes desde localStorage.
- * Si no hay datos, inicializa el array vacío.
  */
 function loadParticipants() {
     const storedData = localStorage.getItem('participants');
-    participants = storedData ? JSON.parse(storedData) : [];
+    if (storedData) {
+        participants = JSON.parse(storedData);
+        // Actualizar números seleccionados
+        selectedNumbers = participants.flatMap(p => p.numbers);
+        console.log("Participantes cargados:", participants.length);
+    }
 }
 
 /**
- * Guarda participantes en localStorage.
+ * Selecciona 5 números aleatorios para el participante.
  */
-function saveParticipants() {
-    localStorage.setItem('participants', JSON.stringify(participants));
+function selectRandomNumbers() {
+    const available = availableNumbers.filter(num => !selectedNumbers.includes(num));
+    if (available.length < NUMBERS_TO_SELECT) {
+        alert("¡No hay suficientes números disponibles!");
+        return null;
+    }
+
+    const shuffled = [...available].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, NUMBERS_TO_SELECT);
 }
 
 /**
- * Agrega un nuevo participante con validaciones.
+ * Procesa la participación (asigna números y redirige).
  */
-function addParticipant() {
-    const nameInput = document.getElementById('participantName');
-    const ticketsInput = document.getElementById('ticketCount');
-    const errorDiv = document.getElementById('error-message');
-
-    const name = nameInput.value.trim();
-    const tickets = parseInt(ticketsInput.value);
-
-    // Validaciones
+function participate() {
+    const name = document.getElementById('participantName').value.trim();
     if (!name) {
-        showError('El nombre no puede estar vacío.', errorDiv);
+        alert("Por favor, ingresa tu nombre.");
         return;
     }
 
-    if (isNaN(tickets) || tickets <= 0) {
-        showError('El número de boletos debe ser mayor a 0.', errorDiv);
-        return;
-    }
+    const numbers = selectRandomNumbers();
+    if (!numbers) return;
 
-    if (tickets > MAX_TICKETS) {
-        showError(`Máximo ${MAX_TICKETS} boletos por persona.`, errorDiv);
-        return;
-    }
+    // Registrar participante
+    participants.push({ name, numbers });
+    selectedNumbers.push(...numbers);
+    localStorage.setItem('participants', JSON.stringify(participants));
 
-    // Verificar si el nombre ya existe
-    if (participants.some(p => p.name.toLowerCase() === name.toLowerCase())) {
-        showError('Este nombre ya está registrado.', errorDiv);
-        return;
-    }
-
-    // Agregar participante
-    participants.push({ name, tickets });
-    saveParticipants();
-    updateParticipantsTable();
-
-    // Limpiar inputs y mensajes
-    nameInput.value = '';
-    ticketsInput.value = '';
-    errorDiv.textContent = '';
+    // Redirigir a winner.html (simulado aquí)
+    window.location.href = "winner.html"; // Cambia a tu URL real
 }
 
 /**
- * Muestra un mensaje de error en el div especificado.
+ * Muestra números disponibles (en consola para prueba).
  */
-function showError(message, errorDiv) {
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-    setTimeout(() => errorDiv.style.display = 'none', 3000);
+function showAvailableNumbers() {
+    const available = availableNumbers.filter(num => !selectedNumbers.includes(num));
+    console.log("Números disponibles:", available);
+    alert(`Hay ${available.length} números disponibles. Ver la consola para detalles.`);
 }
 
 /**
- * Actualiza la tabla de participantes en el HTML.
+ * Cronómetro regresivo hasta las 17:00:00.
  */
-function updateParticipantsTable() {
-    const tableBody = document.getElementById('participantsTable').querySelector('tbody');
-    tableBody.innerHTML = '';
+function startCountdown() {
+    const countdownElement = document.getElementById('countdown');
+    if (!countdownElement) return;
 
-    participants.forEach((participant, index) => {
-        const row = document.createElement('tr');
+    function updateCountdown() {
+        const now = new Date();
+        const today = new Date(now.toDateString());
+        const drawTime = new Date(today.toDateString() + ' ' + DRAW_TIME);
 
-        row.innerHTML = `
-            <td>${participant.name}</td>
-            <td>${participant.tickets}</td>
-            <td><button class="btn btn-danger btn-sm delete-btn" data-index="${index}">🗑️</button></td>
-        `;
-
-        tableBody.appendChild(row);
-    });
-
-    // Agregar evento a los botones de eliminar
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const index = parseInt(this.getAttribute('data-index'));
-            participants.splice(index, 1);
-            saveParticipants();
-            updateParticipantsTable();
-        });
-    });
-}
-
-/**
- * Realiza el sorteo de manera justa (probabilidad ponderada por boletos).
- */
-function drawWinner() {
-    if (participants.length === 0) {
-        showError('No hay participantes para sortear.', document.getElementById('error-message'));
-        return;
-    }
-
-    // Calcular el total de boletos
-    const totalTickets = participants.reduce((sum, p) => sum + p.tickets, 0);
-
-    // Generar un número aleatorio entre 1 y el total de boletos
-    const randomTicket = Math.floor(Math.random() * totalTickets) + 1;
-
-    // Encontrar al ganador
-    let accumulatedTickets = 0;
-    let winner = null;
-
-    for (const participant of participants) {
-        accumulatedTickets += participant.tickets;
-        if (randomTicket <= accumulatedTickets) {
-            winner = participant;
-            break;
+        // Si ya pasó la hora, mostrar "00:00:00"
+        if (now >= drawTime) {
+            countdownElement.textContent = "00:00:00";
+            return;
         }
+
+        const diff = drawTime - now;
+        const hours = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+        const minutes = Math.floor((diff / (1000 * 60)) % 60).toString().padStart(2, '0');
+        const seconds = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
+
+        countdownElement.textContent = `${hours}:${minutes}:${seconds}`;
     }
 
-    // Mostrar el ganador en HTML (no en alert)
-    const winnerDiv = document.getElementById('winner-result');
-    winnerDiv.innerHTML = `
-        <div class="alert alert-success mt-3">
-            <h4>🎉 ¡Ganador: ${winner.name}!</h4>
-            <p>Boletos comprados: ${winner.tickets}</p>
-        </div>
-    `;
-}
-
-/**
- * Borra todos los datos (con confirmación).
- */
-function clearData() {
-    if (confirm('¿Estás seguro de borrar TODOS los participantes?')) {
-        participants = [];
-        localStorage.clear();
-        updateParticipantsTable();
-        document.getElementById('winner-result').innerHTML = '';
-    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
 }
 // Cerrar modal al hacer clic en "Aceptar" o la X
 document.getElementById('acceptTerms').addEventListener('click', closeModal);
