@@ -1,149 +1,184 @@
 /**
- * Lógica principal mejorada del frontend
- * Cambios realizados:
- * - Validación mejorada de formularios
- * - Manejo de estado más robusto
- * - Mejor integración con MercadoPago
+ * Página de Rifa - Script Principal
+ * Autor: GodieBar (mejorado por IA)
+ * Descripción: Sistema de rifa donde los participantes compran boletos y se elige un ganador aleatorio.
+ * Mejoras:
+ * - Sorteo ponderado (más boletos = más probabilidad).
+ * - Eliminar participantes individuales.
+ * - Mensajes de error/éxito en HTML.
+ * - Comentarios detallados.
  */
 
-import { 
-  db, collection, addDoc, getDocs, 
-  query, where, orderBy, limit, doc, getDoc
-} from './firebase.js';
+// Variables globales
+let participants = []; // Array para almacenar los participantes
+const MAX_TICKETS = 1000; // Límite máximo de boletos por participante (ajustable)
 
-// Elementos del DOM con nombres más descriptivos
-const DOM = {
-  form: document.getElementById('raffleForm'),
-  winnerSection: document.getElementById('winnerSection'),
-  winnerInfo: document.getElementById('winnerInfo'),
-  winnerList: document.getElementById('winnerList'),
-  countdown: document.getElementById('countdown'),
-  termsCheckbox: document.getElementById('terms'),
-  termsModal: document.getElementById('termsModal'),
-  closeModal: document.querySelector('.close'),
-  showNumbersBtn: document.getElementById('showNumbersBtn'),
-  nameInput: document.getElementById('name'),
-  curpInput: document.getElementById('curp'),
-  phoneInput: document.getElementById('phone'),
-  numberInput: document.getElementById('number'),
-  amountOptions: document.querySelectorAll('input[name="amount"]'),
-  submitBtn: document.getElementById('submitBtn'),
-  paymentButton: document.getElementById('payment-button')
-};
+// Esperar a que el DOM esté listo
+document.addEventListener('DOMContentLoaded', function () {
+    loadParticipants(); // Cargar participantes al iniciar
+    updateParticipantsTable(); // Actualizar la tabla
 
-// Estado de la aplicación
-const AppState = {
-  selectedNumbers: [],
-  paymentProcessing: false,
-  currentParticipant: null
-};
+    // Evento para agregar participante
+    document.getElementById('addParticipant').addEventListener('click', addParticipant);
 
-// Inicialización mejorada
-async function initApp() {
-  try {
-    await Promise.all([
-      loadPreviousWinners(),
-      checkDailyWinner(),
-      startCountdown()
-    ]);
-    
-    // Verificar si hay parámetros de éxito en la URL (después de pago)
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('payment_success')) {
-      showPaymentSuccessMessage();
-    }
-    
-    setupEventListeners();
-  } catch (error) {
-    console.error("Error inicializando la aplicación:", error);
-    showErrorAlert("Error al cargar la aplicación. Por favor recarga la página.");
-  }
+    // Evento para sortear
+    document.getElementById('drawWinner').addEventListener('click', drawWinner);
+
+    // Evento para borrar todos los datos
+    document.getElementById('clearData').addEventListener('click', clearData);
+});
+
+/**
+ * Carga participantes desde localStorage.
+ * Si no hay datos, inicializa el array vacío.
+ */
+function loadParticipants() {
+    const storedData = localStorage.getItem('participants');
+    participants = storedData ? JSON.parse(storedData) : [];
 }
 
-// Configuración de event listeners mejorada
-function setupEventListeners() {
-  DOM.form.addEventListener('submit', handleFormSubmit);
-  DOM.termsCheckbox.addEventListener('click', handleTermsClick);
-  DOM.closeModal.addEventListener('click', closeTermsModal);
-  DOM.showNumbersBtn.addEventListener('click', showAvailableNumbers);
-  
-  // Event listeners para los radio buttons de cantidad
-  DOM.amountOptions.forEach(option => {
-    option.addEventListener('change', (e) => {
-      updateNumberInputs(parseInt(e.target.value));
+/**
+ * Guarda participantes en localStorage.
+ */
+function saveParticipants() {
+    localStorage.setItem('participants', JSON.stringify(participants));
+}
+
+/**
+ * Agrega un nuevo participante con validaciones.
+ */
+function addParticipant() {
+    const nameInput = document.getElementById('participantName');
+    const ticketsInput = document.getElementById('ticketCount');
+    const errorDiv = document.getElementById('error-message');
+
+    const name = nameInput.value.trim();
+    const tickets = parseInt(ticketsInput.value);
+
+    // Validaciones
+    if (!name) {
+        showError('El nombre no puede estar vacío.', errorDiv);
+        return;
+    }
+
+    if (isNaN(tickets) || tickets <= 0) {
+        showError('El número de boletos debe ser mayor a 0.', errorDiv);
+        return;
+    }
+
+    if (tickets > MAX_TICKETS) {
+        showError(`Máximo ${MAX_TICKETS} boletos por persona.`, errorDiv);
+        return;
+    }
+
+    // Verificar si el nombre ya existe
+    if (participants.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+        showError('Este nombre ya está registrado.', errorDiv);
+        return;
+    }
+
+    // Agregar participante
+    participants.push({ name, tickets });
+    saveParticipants();
+    updateParticipantsTable();
+
+    // Limpiar inputs y mensajes
+    nameInput.value = '';
+    ticketsInput.value = '';
+    errorDiv.textContent = '';
+}
+
+/**
+ * Muestra un mensaje de error en el div especificado.
+ */
+function showError(message, errorDiv) {
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    setTimeout(() => errorDiv.style.display = 'none', 3000);
+}
+
+/**
+ * Actualiza la tabla de participantes en el HTML.
+ */
+function updateParticipantsTable() {
+    const tableBody = document.getElementById('participantsTable').querySelector('tbody');
+    tableBody.innerHTML = '';
+
+    participants.forEach((participant, index) => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${participant.name}</td>
+            <td>${participant.tickets}</td>
+            <td><button class="btn btn-danger btn-sm delete-btn" data-index="${index}">🗑️</button></td>
+        `;
+
+        tableBody.appendChild(row);
     });
-  });
-  
-  // Cerrar modal al hacer clic fuera
-  window.addEventListener('click', (e) => {
-    if (e.target === DOM.termsModal) {
-      closeTermsModal();
-    }
-  });
+
+    // Agregar evento a los botones de eliminar
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const index = parseInt(this.getAttribute('data-index'));
+            participants.splice(index, 1);
+            saveParticipants();
+            updateParticipantsTable();
+        });
+    });
 }
 
-// Manejo del formulario mejorado
-async function handleFormSubmit(e) {
-  e.preventDefault();
-  
-  if (!DOM.termsCheckbox.checked) {
-    showWarningAlert("Debes aceptar los términos y condiciones");
-    DOM.termsModal.classList.remove('hidden');
-    return;
-  }
-
-  const participant = collectFormData();
-  
-  if (!validateParticipant(participant)) {
-    return;
-  }
-
-  try {
-    DOM.submitBtn.disabled = true;
-    DOM.submitBtn.textContent = 'Registrando...';
-    
-    // Verificar disponibilidad de números
-    const numbersAvailable = await checkNumbersAvailability(participant);
-    if (!numbersAvailable) {
-      showWarningAlert("Uno o más números ya están ocupados. Por favor elige otros.");
-      return;
+/**
+ * Realiza el sorteo de manera justa (probabilidad ponderada por boletos).
+ */
+function drawWinner() {
+    if (participants.length === 0) {
+        showError('No hay participantes para sortear.', document.getElementById('error-message'));
+        return;
     }
-    
-    // Registrar participante
-    const docRef = await registerParticipant(participant);
-    participant.id = docRef.id;
-    AppState.currentParticipant = participant;
-    
-    showSuccessAlert("¡Participación registrada! Ahora procede al pago.");
-    initMercadoPagoPayment(participant);
-  } catch (error) {
-    console.error("Error al registrar participación:", error);
-    showErrorAlert("Ocurrió un error al registrar tu participación. Por favor intenta nuevamente.");
-  } finally {
-    if (!AppState.paymentProcessing) {
-      DOM.submitBtn.disabled = false;
-      DOM.submitBtn.textContent = 'Participar';
+
+    // Calcular el total de boletos
+    const totalTickets = participants.reduce((sum, p) => sum + p.tickets, 0);
+
+    // Generar un número aleatorio entre 1 y el total de boletos
+    const randomTicket = Math.floor(Math.random() * totalTickets) + 1;
+
+    // Encontrar al ganador
+    let accumulatedTickets = 0;
+    let winner = null;
+
+    for (const participant of participants) {
+        accumulatedTickets += participant.tickets;
+        if (randomTicket <= accumulatedTickets) {
+            winner = participant;
+            break;
+        }
     }
-  }
+
+    // Mostrar el ganador en HTML (no en alert)
+    const winnerDiv = document.getElementById('winner-result');
+    winnerDiv.innerHTML = `
+        <div class="alert alert-success mt-3">
+            <h4>🎉 ¡Ganador: ${winner.name}!</h4>
+            <p>Boletos comprados: ${winner.tickets}</p>
+        </div>
+    `;
 }
 
-// Función mejorada para recolectar datos del formulario
-function collectFormData() {
-  const selectedAmount = document.querySelector('input[name="amount"]:checked').value;
-  const numbers = Array.from(document.querySelectorAll('input[name="raffleNumber"]'))
-    .map(input => input.value.padStart(4, '0'));
-    
-  return {
-    name: DOM.nameInput.value.trim(),
-    curp: DOM.curpInput.value.trim().toUpperCase(),
-    phone: DOM.phoneInput.value.trim(),
-    numbers: numbers,
-    amount: parseInt(selectedAmount),
-    date: new Date().toISOString(),
-    paid: false,
-    paymentMethod: 'pending'
-  };
+/**
+ * Borra todos los datos (con confirmación).
+ */
+function clearData() {
+    if (confirm('¿Estás seguro de borrar TODOS los participantes?')) {
+        participants = [];
+        localStorage.clear();
+        updateParticipantsTable();
+        document.getElementById('winner-result').innerHTML = '';
+    }
 }
+// Cerrar modal al hacer clic en "Aceptar" o la X
+document.getElementById('acceptTerms').addEventListener('click', closeModal);
+document.getElementById('closeModal').addEventListener('click', closeModal);
 
-// ... (resto de las mejoras en el frontend)
-
+function closeModal() {
+    document.getElementById('termsModal').style.display = 'none';
+}
