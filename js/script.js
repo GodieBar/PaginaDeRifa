@@ -1,136 +1,202 @@
 /**
- * Página de Rifa - Sistema Mejorado
- * - Números únicos entre participantes y en cada selección.
- * - Validación completa del formulario.
- * - Redirección correcta al ganador.
+ * Página de Rifa - Script Principal
+ * Autor: GodieBar (mejorado por IA)
+ * Descripción: Sistema de rifa donde los participantes compran boletos y se elige un ganador aleatorio.
+ * Mejoras:
+ * - Sorteo ponderado (más boletos = más probabilidad).
+ * - Eliminar participantes individuales.
+ * - Mensajes de error/éxito en HTML.
+ * - Comentarios detallados.
  */
 
-const TOTAL_NUMBERS = 10000;
-const NUMBERS_TO_SELECT = 5;
-const DRAW_TIME = "17:00:00";
+// ====== VARIABLES GLOBALES ======
 
-let allNumbers = Array.from({length: TOTAL_NUMBERS}, (_, i) => i.toString().padStart(4, '0'));
-let usedNumbers = new Set();
-let participants = [];
+let participants = []; 
+// Array donde se almacenan los participantes, cada uno como objeto { name, tickets }
 
-document.addEventListener('DOMContentLoaded', function() {
-    loadParticipants();
-    startCountdown();
-    setupNumberInputs();
-    
-    document.getElementById('participateBtn').addEventListener('click', handleParticipation);
-    document.getElementById('viewNumbersBtn').addEventListener('click', showAvailableNumbers);
+const MAX_TICKETS = 1000; 
+// Máximo de boletos que puede comprar una sola persona (ajustable)
+
+// ====== EVENTOS AL CARGAR EL DOM ======
+
+document.addEventListener('DOMContentLoaded', function () {
+    loadParticipants();             // Cargar datos guardados si existen
+    updateParticipantsTable();      // Mostrar la tabla de participantes al inicio
+
+    // Botón para agregar participante
+    document.getElementById('addParticipant').addEventListener('click', addParticipant);
+
+    // Botón para realizar el sorteo
+    document.getElementById('drawWinner').addEventListener('click', drawWinner);
+
+    // Botón para borrar todos los datos
+    document.getElementById('clearData').addEventListener('click', clearData);
 });
 
-function setupNumberInputs() {
-    const container = document.getElementById('numbersContainer');
-    container.innerHTML = '';
-    
-    for (let i = 1; i <= NUMBERS_TO_SELECT; i++) {
-        container.innerHTML += `
-            <div class="number-input">
-                <label>Número ${i}</label>
-                <input type="text" class="number-input" maxlength="4" pattern="\\d{4}" 
-                       placeholder="0000" required>
-            </div>
-        `;
-    }
+/**
+ * Carga participantes desde localStorage.
+ * Si no hay datos, deja el array vacío.
+ */
+function loadParticipants() {
+    const storedData = localStorage.getItem('participants');
+    participants = storedData ? JSON.parse(storedData) : [];
 }
 
-function handleParticipation() {
-    const name = document.getElementById('participantName').value.trim();
-    const numberInputs = document.querySelectorAll('.number-input');
-    const numbers = [];
-    const errors = [];
+/**
+ * Guarda los participantes actuales en localStorage.
+ */
+function saveParticipants() {
+    localStorage.setItem('participants', JSON.stringify(participants));
+}
 
-    // Validar nombre
+/**
+ * Agrega un nuevo participante tras validar los datos.
+ */
+function addParticipant() {
+    const nameInput = document.getElementById('participantName');
+    const ticketsInput = document.getElementById('ticketCount');
+    const errorDiv = document.getElementById('error-message');
+
+    const name = nameInput.value.trim();
+    const tickets = parseInt(ticketsInput.value);
+
+    // VALIDACIONES BÁSICAS
+
     if (!name) {
-        errors.push("Por favor ingresa tu nombre");
-    }
-
-    // Validar números
-    const tempUsed = new Set();
-    numberInputs.forEach(input => {
-        const num = input.value.padStart(4, '0');
-        
-        if (!/^\d{4}$/.test(num)) {
-            errors.push("Todos los números deben ser de 4 dígitos");
-            return;
-        }
-        
-        if (usedNumbers.has(num)) {
-            errors.push(`El número ${num} ya fue seleccionado por otro participante`);
-            return;
-        }
-        
-        if (tempUsed.has(num)) {
-            errors.push(`No puedes repetir el número ${num} en tu selección`);
-            return;
-        }
-        
-        tempUsed.add(num);
-        numbers.push(num);
-    });
-
-    // Mostrar errores o proceder
-    if (errors.length > 0) {
-        alert("Errores:\n" + errors.join("\n"));
+        showError('El nombre no puede estar vacío.', errorDiv);
         return;
     }
 
-    // Registrar participación
-    participants.push({ name, numbers });
-    numbers.forEach(num => usedNumbers.add(num));
-    localStorage.setItem('participants', JSON.stringify(participants));
-    localStorage.setItem('lastWinner', JSON.stringify({ name, numbers }));
-
-    // Redireccionar
-    window.location.href = "winner.html";
-}
-
-function showAvailableNumbers() {
-    const available = allNumbers.filter(num => !usedNumbers.has(num));
-    const count = available.length;
-    alert(`Números disponibles: ${count}\n\nEjemplos:\n${
-        available.slice(0, 5).join(', ')}${count > 5 ? '...' : ''}`);
-}
-
-function loadParticipants() {
-    const stored = localStorage.getItem('participants');
-    if (stored) {
-        participants = JSON.parse(stored);
-        participants.forEach(p => p.numbers.forEach(n => usedNumbers.add(n)));
+    if (isNaN(tickets) || tickets <= 0) {
+        showError('El número de boletos debe ser mayor a 0.', errorDiv);
+        return;
     }
+
+    if (tickets > MAX_TICKETS) {
+        showError(`Máximo ${MAX_TICKETS} boletos por persona.`, errorDiv);
+        return;
+    }
+
+    // Comprobar si el participante ya existe (ignora mayúsculas/minúsculas)
+    if (participants.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+        showError('Este nombre ya está registrado.', errorDiv);
+        return;
+    }
+
+    // Si pasa todas las validaciones, agregamos al array
+    participants.push({ name, tickets });
+    saveParticipants();            // Guardar en localStorage
+    updateParticipantsTable();     // Actualizar tabla en la página
+
+    // Limpiar campos e indicadores
+    nameInput.value = '';
+    ticketsInput.value = '';
+    errorDiv.textContent = '';
 }
 
-function startCountdown() {
-    const element = document.getElementById('countdown');
-    if (!element) return;
+/**
+ * Muestra un mensaje de error en un div visible.
+ * Luego lo oculta tras 3 segundos.
+ */
+function showError(message, errorDiv) {
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    setTimeout(() => errorDiv.style.display = 'none', 3000);
+}
 
-    function update() {
-        const now = new Date();
-        const target = new Date(now.toDateString() + ' ' + DRAW_TIME);
-        
-        if (now >= target) {
-            element.textContent = "00:00:00";
-            return;
+/**
+ * Actualiza el contenido de la tabla de participantes en el HTML.
+ */
+function updateParticipantsTable() {
+    const tableBody = document.getElementById('participantsTable').querySelector('tbody');
+    tableBody.innerHTML = ''; // Limpiar tabla antes de volver a dibujarla
+
+    participants.forEach((participant, index) => {
+        const row = document.createElement('tr');
+
+        // Creamos una fila con:
+        // - nombre
+        // - cantidad de boletos
+        // - botón para eliminarlo
+        row.innerHTML = `
+            <td>${participant.name}</td>
+            <td>${participant.tickets}</td>
+            <td><button class="btn btn-danger btn-sm delete-btn" data-index="${index}">🗑️</button></td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+
+    // Asignar eventos a todos los botones "eliminar" recién creados
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const index = parseInt(this.getAttribute('data-index'));
+            participants.splice(index, 1); // Eliminar del array
+            saveParticipants();             // Guardar cambios
+            updateParticipantsTable();      // Refrescar tabla
+        });
+    });
+}
+
+/**
+ * Realiza el sorteo ponderado según la cantidad de boletos.
+ */
+function drawWinner() {
+    if (participants.length === 0) {
+        showError('No hay participantes para sortear.', document.getElementById('error-message'));
+        return;
+    }
+
+    // Calcular el total de boletos en juego
+    const totalTickets = participants.reduce((sum, p) => sum + p.tickets, 0);
+
+    // Generar un número aleatorio entre 1 y totalTickets
+    const randomTicket = Math.floor(Math.random() * totalTickets) + 1;
+
+    // Vamos sumando los boletos acumulados hasta encontrar al ganador
+    let accumulatedTickets = 0;
+    let winner = null;
+
+    for (const participant of participants) {
+        accumulatedTickets += participant.tickets;
+
+        if (randomTicket <= accumulatedTickets) {
+            winner = participant;
+            break;
         }
-
-        const diff = target - now;
-        const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
-        const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
-        const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-
-        element.textContent = `${h}:${m}:${s}`;
     }
 
-    update();
-    setInterval(update, 1000);
+    // Mostrar el ganador en un div HTML
+    const winnerDiv = document.getElementById('winner-result');
+    winnerDiv.innerHTML = `
+        <div class="alert alert-success mt-3">
+            <h4>🎉 ¡Ganador: ${winner.name}!</h4>
+            <p>Boletos comprados: ${winner.tickets}</p>
+        </div>
+    `;
 }
+
+/**
+ * Borra todos los datos del sistema (con confirmación).
+ */
+function clearData() {
+    if (confirm('¿Estás seguro de borrar TODOS los participantes?')) {
+        participants = [];
+        localStorage.clear();
+        updateParticipantsTable();
+        document.getElementById('winner-result').innerHTML = '';
+    }
+}
+
+// ========== MODAL TÉRMINOS Y CONDICIONES ==========
+
 // Cerrar modal al hacer clic en "Aceptar" o la X
 document.getElementById('acceptTerms').addEventListener('click', closeModal);
 document.getElementById('closeModal').addEventListener('click', closeModal);
 
+/**
+ * Oculta el modal de términos.
+ */
 function closeModal() {
     document.getElementById('termsModal').style.display = 'none';
 }
