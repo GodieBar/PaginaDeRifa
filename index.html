@@ -4,195 +4,450 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- SEO y redes sociales -->
-  <meta name="description" content="Participa en nuestra rifa diaria y gana premios de hasta $5,000 MXN">
-  <meta name="keywords" content="rifa, sorteos, premios, ganar dinero, boletos, lotería, México">
-  <meta property="og:title" content="Rifa Diaria | Participa y Gana Premios">
-  <meta property="og:description" content="Participa en nuestra rifa diaria y gana premios de hasta $5,000 MXN.">
-  <meta property="og:image" content="https://tusitio.com/imagen-preview.jpg">
+  
+  <!-- SEO mejorado -->
+  <meta name="description" content="Participa en nuestra rifa diaria con premios garantizados. Compra boletos desde $20 MXN y gana hasta $5,000 MXN en efectivo.">
+  <meta name="keywords" content="rifa, sorteos diarios, premios en efectivo, ganar dinero, boletos de rifa, lotería online México">
+  <meta property="og:title" content="Rifa Diaria | Gana hasta $5,000 MXN cada día">
+  <meta property="og:description" content="Participa en nuestro sorteo diario con premios en efectivo. Boletos desde $20 MXN. ¡Juega hoy y gana!">
+  <meta property="og:image" content="https://tusitio.com/images/rifa-diaria-premio.jpg">
+  <meta property="og:url" content="https://tusitio.com/rifa">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#FF5722">
-
-  <title>Rifa Diaria | Participa y Gana Premios</title>
-
-  <!-- Preconexión para performance -->
+  <meta name="theme-color" content="#E91E63">
+  
+  <!-- Preconexiones mejoradas -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-Xx..." crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <!-- Favicon -->
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://sdk.mercadopago.com" crossorigin>
+  
+  <!-- Preload para recursos críticos -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@600;700&display=swap" as="style">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
+  
+  <!-- Fuentes mejoradas -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  
+  <!-- Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Favicon mejorado -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  
+  <title>Rifa Diaria | Gana hasta $5,000 MXN cada día</title>
+  
   <!-- Estilos principales -->
-  <link rel="stylesheet" href="/csS/style.css">
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Estilos críticos inline -->
+  <style>
+    .critical-css {
+      /* Aquí iría el CSS crítico para el above-the-fold */
+    }
+  </style>
 </head>
 
 <body>
+  <!-- Skip link para accesibilidad -->
+  <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+  
   <div class="app-container">
-
-    <!-- HEADER -->
+    <!-- HEADER MEJORADO -->
     <header class="main-header" aria-label="Encabezado principal">
-      <div class="header-content">
-        <a href="/" class="logo-container">
-          <i class="fas fa-ticket-alt logo-icon"></i>
+      <div class="header-content container">
+        <a href="/" class="logo-container" aria-label="Inicio">
+          <i class="fas fa-ticket-alt logo-icon" aria-hidden="true"></i>
           <h1 class="logo-text">Rifa<span>Diaria</span></h1>
         </a>
-
-        <nav class="admin-nav" aria-label="Navegación de administración">
-          <a href="admin.html" class="admin-link">
-            <i class="fas fa-user-shield"></i> Panel Vendedor
-          </a>
+        
+        <nav class="main-nav" aria-label="Navegación principal">
+          <ul>
+            <li><a href="#participar" class="nav-link">Participar</a></li>
+            <li><a href="#ganadores" class="nav-link">Ganadores</a></li>
+            <li><a href="como-funciona.html" class="nav-link">Cómo funciona</a></li>
+          </ul>
         </nav>
+        
+        <div class="header-actions">
+          <a href="admin.html" class="admin-link" aria-label="Panel de vendedor">
+            <i class="fas fa-user-shield" aria-hidden="true"></i>
+            <span class="desktop-text">Panel Vendedor</span>
+            <span class="mobile-text">Vendedor</span>
+          </a>
+        </div>
+        
+        <button class="mobile-menu-button" aria-label="Menú móvil" aria-expanded="false">
+          <i class="fas fa-bars"></i>
+        </button>
       </div>
     </header>
 
-    <!-- HERO -->
-    <section class="hero" aria-label="Información principal">
-      <div class="hero-content">
-        <h2 class="hero-title">
-          ¡Gana hasta <span>$5,000 MXN</span> hoy!
-        </h2>
-        <p class="hero-subtitle">
-          Participa con solo $20 o $100 MXN
-        </p>
+    <!-- HERO SECTION MEJORADO -->
+    <section class="hero" aria-label="Sorteo diario con premios en efectivo">
+      <div class="hero-content container">
+        <div class="hero-text">
+          <h2 class="hero-title">
+            <span class="highlight-text">¡Gana hasta $5,000 MXN</span> en nuestro sorteo diario
+          </h2>
+          <p class="hero-subtitle">
+            Participa con solo $20 MXN y aumenta tus chances con $100 MXN
+          </p>
+          
+          <div class="hero-stats">
+            <div class="stat-item">
+              <i class="fas fa-users" aria-hidden="true"></i>
+              <span class="stat-number" id="participantsCount">1,245</span>
+              <span class="stat-label">Participantes hoy</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-trophy" aria-hidden="true"></i>
+              <span class="stat-number">$3,850</span>
+              <span class="stat-label">Premio actual</span>
+            </div>
+          </div>
+          
+          <a href="#participar" class="btn btn-hero">
+            <i class="fas fa-play-circle" aria-hidden="true"></i> Participar ahora
+          </a>
+        </div>
+        
         <div class="countdown-container">
           <p class="countdown-text">Próximo sorteo en:</p>
-          <div class="countdown-timer" id="countdown">
-            <span class="countdown-digit">17</span>:
-            <span class="countdown-digit">00</span>:
-            <span class="countdown-digit">00</span>
+          <div class="countdown-timer" id="countdown" role="timer" aria-live="polite">
+            <div class="countdown-segment">
+              <span class="countdown-digit" id="hours">17</span>
+              <span class="countdown-label">Horas</span>
+            </div>
+            <div class="countdown-segment">
+              <span class="countdown-digit" id="minutes">00</span>
+              <span class="countdown-label">Minutos</span>
+            </div>
+            <div class="countdown-segment">
+              <span class="countdown-digit" id="seconds">00</span>
+              <span class="countdown-label">Segundos</span>
+            </div>
           </div>
+          <button class="btn btn-alert" id="notifyMe">
+            <i class="fas fa-bell" aria-hidden="true"></i> Notificarme
+          </button>
+        </div>
+      </div>
+      
+      <div class="hero-payment-methods">
+        <p class="payment-text">Métodos de pago aceptados:</p>
+        <div class="payment-icons">
+          <i class="fab fa-cc-visa" aria-label="Visa"></i>
+          <i class="fab fa-cc-mastercard" aria-label="Mastercard"></i>
+          <i class="fab fa-cc-amex" aria-label="American Express"></i>
+          <i class="fab fa-cc-paypal" aria-label="PayPal"></i>
+          <i class="fas fa-money-bill-wave" aria-label="Efectivo"></i>
         </div>
       </div>
     </section>
 
-    <!-- FORMULARIO DE PARTICIPACIÓN -->
-    <main class="main-content">
-      <section class="participation-form" aria-labelledby="participationTitle">
-        <h2 class="section-title" id="participationTitle">Participa en la rifa</h2>
-
-        <form id="raffleForm" class="form-container" novalidate>
-
-          <!-- DATOS PERSONALES -->
-          <fieldset class="form-fieldset">
-            <legend class="fieldset-legend">Tus datos personales</legend>
-
-            <div class="form-group">
-              <label for="name" class="form-label">Nombre completo</label>
-              <input type="text" id="name" name="name" class="form-input" placeholder="Ej. Juan Pérez López" required aria-required="true">
-              <span class="input-icon"><i class="fas fa-user"></i></span>
-            </div>
-
-            <div class="form-group">
-              <label for="curp" class="form-label">CURP</label>
-              <input type="text" id="curp" name="curp" class="form-input" placeholder="Ej. PEAJ800101HDFLRN01" pattern="^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]{2}$" required aria-required="true">
-              <span class="input-icon"><i class="fas fa-id-card"></i></span>
-              <small class="form-hint">Formato: 4 letras, 6 números, H/M, 5 letras, 2 alfanuméricos</small>
-            </div>
-
-            <div class="form-group">
-              <label for="phone" class="form-label">Teléfono</label>
-              <input type="tel" id="phone" name="phone" class="form-input" placeholder="Ej. 5512345678" pattern="[0-9]{10}" required aria-required="true">
-              <span class="input-icon"><i class="fas fa-mobile-alt"></i></span>
-            </div>
-          </fieldset>
-
-          <!-- TIPO DE PARTICIPACIÓN -->
-          <fieldset class="form-fieldset">
-            <legend class="fieldset-legend">Tipo de participación</legend>
-
-            <div class="amount-selection">
-              <div class="amount-options">
-
-                <label class="amount-option">
-                  <input type="radio" name="amount" value="20" checked class="amount-radio">
-                  <div class="option-card">
-                    <span class="option-amount">$20 MXN</span>
-                    <span class="option-detail">1 número</span>
-                    <span class="option-badge">Popular</span>
-                  </div>
-                </label>
-
-                <label class="amount-option">
-                  <input type="radio" name="amount" value="100" class="amount-radio">
-                  <div class="option-card">
-                    <span class="option-amount">$100 MXN</span>
-                    <span class="option-detail">5 números</span>
-                    <span class="option-badge">Mejor chance</span>
-                  </div>
-                </label>
-
-              </div>
-            </div>
-
-            <!-- Inputs dinámicos generados por JS -->
-            <div class="number-inputs-container" id="numberInputsContainer"></div>
-          </fieldset>
-
-          <!-- TÉRMINOS Y CONDICIONES -->
-          <div class="terms-container">
-            <label class="terms-checkbox">
-              <input type="checkbox" id="terms" name="terms" required aria-required="true">
-              <span class="checkmark"></span>
-              <span class="terms-text">
-                Acepto los 
-                <a href="#" class="terms-link" id="termsLink">términos y condiciones</a>
-              </span>
-            </label>
+    <!-- MAIN CONTENT -->
+    <main id="main-content" class="main-content container">
+      <!-- CÓMO FUNCIONA -->
+      <section class="how-it-works" aria-labelledby="howItWorksTitle">
+        <h2 class="section-title" id="howItWorksTitle">¿Cómo funciona?</h2>
+        <div class="steps-container">
+          <div class="step">
+            <div class="step-number">1</div>
+            <i class="fas fa-ticket-alt step-icon" aria-hidden="true"></i>
+            <h3 class="step-title">Elige tus números</h3>
+            <p class="step-description">Selecciona entre 1 y 5 números de 4 dígitos cada uno.</p>
           </div>
-
-          <!-- BOTONES -->
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary" id="submitBtn">
-              <span class="btn-text">Participar ahora</span>
-              <i class="fas fa-arrow-right btn-icon"></i>
-            </button>
-            <div id="payment-button" class="mercado-pago-container hidden"></div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <i class="fas fa-money-bill-wave step-icon" aria-hidden="true"></i>
+            <h3 class="step-title">Realiza tu pago</h3>
+            <p class="step-description">Paga con tarjeta, transferencia o en efectivo con un vendedor.</p>
           </div>
-
-        </form>
+          <div class="step">
+            <div class="step-number">3</div>
+            <i class="fas fa-trophy step-icon" aria-hidden="true"></i>
+            <h3 class="step-title">Espera el sorteo</h3>
+            <p class="step-description">El sorteo se realiza diariamente a las 17:00 hrs.</p>
+          </div>
+        </div>
       </section>
 
-      <!-- GANADORES -->
-      <section class="winners-section" aria-labelledby="winnersTitle">
+      <!-- FORMULARIO DE PARTICIPACIÓN MEJORADO -->
+      <section id="participar" class="participation-form" aria-labelledby="participationTitle">
+        <h2 class="section-title" id="participationTitle">Participa en la rifa</h2>
+        
+        <div class="form-grid">
+          <div class="form-column">
+            <form id="raffleForm" class="form-container" novalidate>
+              <fieldset class="form-fieldset">
+                <legend class="fieldset-legend">
+                  <i class="fas fa-user-edit" aria-hidden="true"></i> Tus datos personales
+                </legend>
+
+                <div class="form-group">
+                  <label for="name" class="form-label">Nombre completo*</label>
+                  <div class="input-container">
+                    <input type="text" id="name" name="name" class="form-input" 
+                           placeholder="Ej. Juan Pérez López" required
+                           pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]{3,50}"
+                           aria-describedby="nameHelp">
+                    <span class="input-icon"><i class="fas fa-user"></i></span>
+                    <span class="input-valid-icon"><i class="fas fa-check"></i></span>
+                  </div>
+                  <small id="nameHelp" class="form-hint">Mínimo 3 caracteres, solo letras</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="curp" class="form-label">CURP*</label>
+                  <div class="input-container">
+                    <input type="text" id="curp" name="curp" class="form-input" 
+                           placeholder="Ej. PEAJ800101HDFLRN01" 
+                           pattern="^[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]{2}$" 
+                           required aria-describedby="curpHelp">
+                    <span class="input-icon"><i class="fas fa-id-card"></i></span>
+                    <span class="input-valid-icon"><i class="fas fa-check"></i></span>
+                  </div>
+                  <small id="curpHelp" class="form-hint">Formato: 4 letras, 6 números, H/M, 5 letras, 2 alfanuméricos</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="phone" class="form-label">Teléfono*</label>
+                  <div class="input-container">
+                    <input type="tel" id="phone" name="phone" class="form-input" 
+                           placeholder="Ej. 5512345678" pattern="[0-9]{10}" 
+                           required aria-describedby="phoneHelp">
+                    <span class="input-icon"><i class="fas fa-mobile-alt"></i></span>
+                    <span class="input-valid-icon"><i class="fas fa-check"></i></span>
+                  </div>
+                  <small id="phoneHelp" class="form-hint">10 dígitos sin espacios ni guiones</small>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+          
+          <div class="form-column">
+            <form id="raffleForm" class="form-container" novalidate>
+              <fieldset class="form-fieldset">
+                <legend class="fieldset-legend">
+                  <i class="fas fa-ticket-alt" aria-hidden="true"></i> Tipo de participación
+                </legend>
+
+                <div class="amount-selection">
+                  <div class="amount-options">
+                    <label class="amount-option">
+                      <input type="radio" name="amount" value="20" checked class="amount-radio">
+                      <div class="option-card">
+                        <span class="option-amount">$20 MXN</span>
+                        <span class="option-detail">1 número</span>
+                        <span class="option-badge">Popular</span>
+                        <div class="option-benefits">
+                          <p><i class="fas fa-check-circle"></i> 1 oportunidad para ganar</p>
+                          <p><i class="fas fa-check-circle"></i> Premio mínimo garantizado</p>
+                        </div>
+                      </div>
+                    </label>
+
+                    <label class="amount-option">
+                      <input type="radio" name="amount" value="100" class="amount-radio">
+                      <div class="option-card">
+                        <span class="option-amount">$100 MXN</span>
+                        <span class="option-detail">5 números</span>
+                        <span class="option-badge">Mejor chance</span>
+                        <div class="option-benefits">
+                          <p><i class="fas fa-check-circle"></i> 5 oportunidades para ganar</p>
+                          <p><i class="fas fa-check-circle"></i> Descuento del 20%</p>
+                          <p><i class="fas fa-check-circle"></i> Posibilidad de múltiples premios</p>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="number-inputs-container" id="numberInputsContainer">
+                  <!-- Generado dinámicamente por JavaScript -->
+                </div>
+              </fieldset>
+
+              <div class="terms-container">
+                <label class="terms-checkbox">
+                  <input type="checkbox" id="terms" name="terms" required aria-required="true">
+                  <span class="checkmark"></span>
+                  <span class="terms-text">
+                    Acepto los <a href="#termsModal" class="terms-link" id="termsLink">términos y condiciones</a> y
+                    <a href="#privacyModal" class="terms-link">política de privacidad</a>*
+                  </span>
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                  <i class="fas fa-lock" aria-hidden="true"></i>
+                  <span class="btn-text">Participar ahora</span>
+                  <i class="fas fa-arrow-right btn-icon" aria-hidden="true"></i>
+                </button>
+                
+                <div id="payment-button" class="mercado-pago-container hidden"></div>
+                
+                <div class="payment-security">
+                  <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                  <span>Pago seguro con encriptación SSL</span>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- GANADORES MEJORADO -->
+      <section id="ganadores" class="winners-section" aria-labelledby="winnersTitle">
         <h2 class="section-title" id="winnersTitle">Últimos ganadores</h2>
+        
+        <div class="winners-header">
+          <div class="winners-filter">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="today">Hoy</button>
+            <button class="filter-btn" data-filter="week">Esta semana</button>
+            <button class="filter-btn" data-filter="month">Este mes</button>
+          </div>
+          
+          <div class="total-prize">
+            <i class="fas fa-coins" aria-hidden="true"></i>
+            <span>Total premiado: <strong>$85,750 MXN</strong></span>
+          </div>
+        </div>
+        
         <div class="winners-container">
-          <div class="winners-carousel" id="winnerList"></div>
+          <div class="winners-carousel" id="winnerList">
+            <!-- Ejemplo de ganador -->
+            <div class="winner-card">
+              <div class="winner-avatar">
+                <span class="winner-initials">JP</span>
+              </div>
+              <div class="winner-info">
+                <h3 class="winner-name">Juan Pérez</h3>
+                <div class="winner-details">
+                  <span class="winner-date">15 Jul 2025</span>
+                  <span class="winner-prize">$4,250 MXN</span>
+                </div>
+                <div class="winner-numbers">
+                  <span class="number-badge">4582</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Más ganadores generados por JavaScript -->
+          </div>
+          
+          <button class="carousel-control prev" aria-label="Ganadores anteriores">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="carousel-control next" aria-label="Siguientes ganadores">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        
+        <div class="winners-cta">
+          <p>¿Serás el próximo ganador?</p>
+          <a href="#participar" class="btn btn-secondary">
+            <i class="fas fa-ticket-alt" aria-hidden="true"></i> Participar ahora
+          </a>
+        </div>
+      </section>
+
+      <!-- PREGUNTAS FRECUENTES -->
+      <section class="faq-section" aria-labelledby="faqTitle">
+        <h2 class="section-title" id="faqTitle">Preguntas frecuentes</h2>
+        
+        <div class="faq-container">
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq1">
+              ¿Cómo sé si gané?
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="faq-answer" id="faq1">
+              <p>Los resultados se publican en esta página inmediatamente después del sorteo. Además, si eres ganador, nos pondremos en contacto contigo por teléfono y correo electrónico.</p>
+            </div>
+          </div>
+          
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq2">
+              ¿Cómo recibo mi premio?
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="faq-answer" id="faq2">
+              <p>Los premios se pagan mediante transferencia bancaria o efectivo en nuestras oficinas. El pago se realiza dentro de las 24 horas siguientes al sorteo.</p>
+            </div>
+          </div>
+          
+          <!-- Más preguntas frecuentes -->
         </div>
       </section>
     </main>
 
-    <!-- FOOTER -->
+    <!-- FOOTER MEJORADO -->
     <footer class="main-footer">
-      <div class="footer-content">
-        <a href="/" class="footer-logo">
-          <i class="fas fa-ticket-alt"></i>
-          <span>RifaDiaria</span>
-        </a>
-        <nav class="footer-links" aria-label="Enlaces del pie de página">
-          <a href="#" class="footer-link">Términos y condiciones</a>
-          <a href="#" class="footer-link">Política de privacidad</a>
-          <a href="#" class="footer-link">Contacto</a>
-        </nav>
-        <div class="footer-social">
-          <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" class="social-link" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+      <div class="footer-content container">
+        <div class="footer-section">
+          <a href="/" class="footer-logo">
+            <i class="fas fa-ticket-alt" aria-hidden="true"></i>
+            <span>RifaDiaria</span>
+          </a>
+          <p class="footer-description">
+            Sorteos diarios con premios en efectivo garantizados. Participa y gana hoy mismo.
+          </p>
+          
+          <div class="footer-social">
+            <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-link" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        
+        <div class="footer-section">
+          <h3 class="footer-title">Enlaces rápidos</h3>
+          <nav class="footer-links" aria-label="Enlaces del pie de página">
+            <a href="#" class="footer-link">Cómo participar</a>
+            <a href="#" class="footer-link">Ganadores</a>
+            <a href="#" class="footer-link">Preguntas frecuentes</a>
+            <a href="#" class="footer-link">Contáctanos</a>
+          </nav>
+        </div>
+        
+        <div class="footer-section">
+          <h3 class="footer-title">Legal</h3>
+          <nav class="footer-links" aria-label="Enlaces legales">
+            <a href="#" class="footer-link">Términos y condiciones</a>
+            <a href="#" class="footer-link">Política de privacidad</a>
+            <a href="#" class="footer-link">Aviso legal</a>
+            <a href="#" class="footer-link">Reglamento de sorteos</a>
+          </nav>
+        </div>
+        
+        <div class="footer-section">
+          <h3 class="footer-title">Contacto</h3>
+          <address class="footer-contact">
+            <p><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Av. Insurgentes 123, CDMX</p>
+            <p><i class="fas fa-phone-alt" aria-hidden="true"></i> <a href="tel:+525512345678">55 1234 5678</a></p>
+            <p><i class="fas fa-envelope" aria-hidden="true"></i> <a href="mailto:contacto@rifadiaria.com">contacto@rifadiaria.com</a></p>
+          </address>
         </div>
       </div>
+      
       <div class="footer-copyright">
-        <p>&copy; 2025 RifaDiaria. Todos los derechos reservados.</p>
+        <div class="container">
+          <p>&copy; 2025 RifaDiaria. Todos los derechos reservados.</p>
+          <p class="footer-disclaimer">
+            Este sitio es solo para mayores de 18 años. Juega con responsabilidad.
+          </p>
+        </div>
       </div>
     </footer>
-
   </div>
 
-  <!-- MODAL Términos y Condiciones -->
+  <!-- MODAL Términos y Condiciones Mejorado -->
   <div class="modal" id="termsModal" role="dialog" aria-modal="true" aria-labelledby="termsModalTitle" hidden>
     <div class="modal-overlay" id="modalOverlay"></div>
     <div class="modal-container">
@@ -207,82 +462,175 @@
           <article class="terms-article">
             <h3>1. Participación</h3>
             <p>Válida solo para mayores de 18 años. Cada participación equivale a un número de 4 dígitos.</p>
+            <p>Los participantes deben proporcionar información verídica y completa para poder reclamar premios.</p>
           </article>
+          
           <article class="terms-article">
             <h3>2. Sorteos</h3>
-            <p>Se realizan diariamente a las 17:00 hrs. El ganador se selecciona aleatoriamente.</p>
+            <p>Se realizan diariamente a las 17:00 hrs. El ganador se selecciona aleatoriamente mediante un sistema auditado.</p>
+            <p>Los resultados son inapelables y se publican inmediatamente después del sorteo.</p>
           </article>
+          
           <article class="terms-article">
             <h3>3. Premios</h3>
             <p>El premio base es de $3,000 MXN y puede aumentar según el número de participantes.</p>
+            <p>Los premios se pagan dentro de las 24 horas posteriores al sorteo mediante transferencia bancaria.</p>
           </article>
+          
           <article class="terms-article">
             <h3>4. Pagos</h3>
-            <p>Solo participaciones pagadas en efectivo a los vendedores serán incluidas en el sorteo.</p>
+            <p>Solo participaciones pagadas serán incluidas en el sorteo. No se aceptan devoluciones.</p>
+            <p>Los pagos pueden realizarse mediante tarjeta de crédito/débito, transferencia o en efectivo con vendedores autorizados.</p>
           </article>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-accept" id="acceptTerms">Aceptar términos</button>
+        <button class="btn btn-accept" id="acceptTerms">
+          <i class="fas fa-check-circle" aria-hidden="true"></i> Acepto los términos
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- SCRIPTS -->
-  <script src="https://sdk.mercadopago.com/js/v2"></script>
-  <script type="module" src="js/firebase.js"></script>
-  <script type="module" src="js/script.js"></script>
+  <!-- MODAL de Confirmación de Pago -->
+  <div class="modal" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle" hidden>
+    <div class="modal-overlay" id="paymentOverlay"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title" id="paymentModalTitle">Confirmación de pago</h2>
+        <button class="modal-close" id="paymentClose" aria-label="Cerrar modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-content">
+        <div class="payment-confirmation">
+          <div class="payment-success">
+            <i class="fas fa-check-circle success-icon" aria-hidden="true"></i>
+            <h3>¡Pago exitoso!</h3>
+            <p>Tu participación en la rifa ha sido confirmada.</p>
+          </div>
+          
+          <div class="payment-details">
+            <h4>Detalles de tu compra:</h4>
+            <ul>
+              <li><strong>Número de ticket:</strong> <span id="ticketNumber">RD-20250715-4582</span></li>
+              <li><strong>Números jugados:</strong> <span id="playedNumbers">4582, 7123, 9856</span></li>
+              <li><strong>Fecha del sorteo:</strong> <span id="drawDate">15 de Julio, 2025 - 17:00 hrs</span></li>
+              <li><strong>Monto total:</strong> <span id="totalAmount">$100 MXN</span></li>
+            </ul>
+          </div>
+          
+          <div class="payment-next">
+            <p>Recibirás un correo electrónico con los detalles de tu participación. ¡Mucha suerte!</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="closePaymentModal">
+          <i class="fas fa-thumbs-up" aria-hidden="true"></i> Entendido
+        </button>
+      </div>
+    </div>
+  </div>
 
+  <!-- SCRIPTS MEJORADOS -->
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
+  
+  <!-- Firebase -->
+  <script type="module" src="/js/firebase-config.js"></script>
+  
+  <!-- Componentes -->
+  <script type="module" src="/js/components/form-validation.js"></script>
+  <script type="module" src="/js/components/countdown.js"></script>
+  <script type="module" src="/js/components/winners-carousel.js"></script>
+  <script type="module" src="/js/components/faq-accordion.js"></script>
+  <script type="module" src="/js/components/modal-manager.js"></script>
+  
+  <!-- App principal -->
+  <script type="module" src="/js/app.js"></script>
+  
+  <!-- Inline scripts para funcionalidad básica -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Inicialización básica del formulario
       updateNumberInputs(1);
-
+      
+      // Manejo de los radio buttons para cantidad
       document.querySelectorAll('input[name="amount"]').forEach(radio => {
         radio.addEventListener('change', e => {
           updateNumberInputs(e.target.value === '20' ? 1 : 5);
         });
       });
-
+      
+      // Función para actualizar los inputs de números
+      function updateNumberInputs(count) {
+        const container = document.getElementById('numberInputsContainer');
+        container.innerHTML = '';
+        
+        for (let i = 0; i < count; i++) {
+          const group = document.createElement('div');
+          group.className = 'form-group number-group';
+          group.innerHTML = `
+            <label class="form-label">Número ${i + 1}*</label>
+            <div class="number-input-container">
+              <input type="text" name="raffleNumber" class="form-input number-input"
+                     pattern="\\d{4}" maxlength="4" required
+                     placeholder="0000" aria-label="Número de rifa ${i + 1}"
+                     aria-describedby="numberHelp${i}">
+              <span class="input-icon"><i class="fas fa-hashtag"></i></span>
+              <span class="input-valid-icon"><i class="fas fa-check"></i></span>
+            </div>
+            <small id="numberHelp${i}" class="form-hint">4 dígitos (0000-9999)</small>
+          `;
+          container.appendChild(group);
+        }
+      }
+      
+      // Manejo básico del modal de términos
       const termsLink = document.getElementById('termsLink');
       const termsModal = document.getElementById('termsModal');
       const modalClose = document.getElementById('modalClose');
       const modalOverlay = document.getElementById('modalOverlay');
-
+      
       termsLink.addEventListener('click', e => {
         e.preventDefault();
         termsModal.hidden = false;
         document.body.style.overflow = 'hidden';
       });
-
+      
       const closeModal = () => {
         termsModal.hidden = true;
         document.body.style.overflow = '';
       };
-
+      
       modalClose.addEventListener('click', closeModal);
       modalOverlay.addEventListener('click', closeModal);
     });
-
-    function updateNumberInputs(count) {
-      const container = document.getElementById('numberInputsContainer');
-      container.innerHTML = '';
-
-      for (let i = 0; i < count; i++) {
-        const group = document.createElement('div');
-        group.className = 'form-group number-group';
-        group.innerHTML = `
-          <label class="form-label">Número ${i + 1}</label>
-          <div class="number-input-container">
-            <input type="text" name="raffleNumber" class="form-input number-input"
-                   pattern="\\d{4}" maxlength="4" required
-                   placeholder="0000" aria-label="Número de rifa ${i + 1}">
-            <span class="input-icon"><i class="fas fa-hashtag"></i></span>
-          </div>
-        `;
-        container.appendChild(group);
+    
+    // Inicialización básica del contador
+    function updateCountdown() {
+      const now = new Date();
+      const target = new Date();
+      
+      // Establecer el objetivo a las 17:00 del día actual o siguiente
+      target.setHours(17, 0, 0, 0);
+      if (now > target) {
+        target.setDate(target.getDate() + 1);
       }
+      
+      const diff = target - now;
+      
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+      document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+      document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
     }
     
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
   </script>
 </body>
 </html>
