@@ -37,6 +37,9 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
   
+  <!-- 🔥 NUEVO: Meta para dark mode -->
+  <meta name="color-scheme" content="light dark">
+  
   <title>Rifa Diaria | Gana hasta $5,000 MXN cada día</title>
   
   <!-- Estilos principales -->
@@ -47,12 +50,171 @@
     .critical-css {
       /* Aquí iría el CSS crítico para el above-the-fold */
     }
+    
+    /* 🔥 NUEVO: Estilos añadidos */
+    /* Spinner/loader */
+    .loader {
+      display: none;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #E91E63;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Error messages */
+    .error-message {
+      color: #d32f2f;
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+    
+    .has-error .form-input {
+      border-color: #d32f2f;
+    }
+    
+    /* Progress indicator */
+    .numbers-progress {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    
+    /* Dark mode toggle */
+    .dark-mode-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+      background: #333;
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    
+    /* Confetti effect */
+    .confetti {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      pointer-events: none;
+      display: none;
+    }
+    
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+    
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+      margin-left: 5px;
+    }
+    
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.8rem;
+    }
+    
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    /* Breadcrumbs */
+    .breadcrumbs {
+      padding: 1rem 0;
+      font-size: 0.9rem;
+    }
+    
+    .breadcrumbs ol {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .breadcrumbs li {
+      margin-right: 0.5rem;
+    }
+    
+    .breadcrumbs li:not(:last-child):after {
+      content: ">";
+      margin-left: 0.5rem;
+      color: #666;
+    }
+    
+    .breadcrumbs a {
+      color: #E91E63;
+      text-decoration: none;
+    }
+    
+    .breadcrumbs [aria-current="page"] {
+      color: #666;
+    }
+    
+    /* Botón limpiar formulario */
+    .btn-clear {
+      background: #f5f5f5;
+      color: #333;
+      border: 1px solid #ddd;
+      margin-left: 1rem;
+    }
+    
+    .btn-clear:hover {
+      background: #eee;
+    }
   </style>
 </head>
 
 <body>
   <!-- Skip link para accesibilidad -->
   <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+  
+  <!-- 🔥 NUEVO: Breadcrumbs -->
+  <nav class="breadcrumbs container" aria-label="Ruta de navegación">
+    <ol>
+      <li><a href="/">Inicio</a></li>
+      <li aria-current="page">Rifa Diaria</li>
+    </ol>
+  </nav>
   
   <div class="app-container">
     <!-- HEADER MEJORADO -->
@@ -198,10 +360,19 @@
                     <span class="input-valid-icon"><i class="fas fa-check"></i></span>
                   </div>
                   <small id="nameHelp" class="form-hint">Mínimo 3 caracteres, solo letras</small>
+                  <!-- 🔥 NUEVO: Mensaje de error -->
+                  <div id="name-error" class="error-message" role="alert">Por favor ingresa un nombre válido</div>
                 </div>
 
                 <div class="form-group">
-                  <label for="curp" class="form-label">CURP*</label>
+                  <!-- 🔥 NUEVO: Tooltip añadido -->
+                  <label for="curp" class="form-label">
+                    CURP*
+                    <span class="tooltip">
+                      <i class="fas fa-question-circle"></i>
+                      <span class="tooltiptext">Ejemplo: PEAJ800101HDFLRN01 - 4 letras, 6 números, H/M, 5 letras, 2 alfanuméricos</span>
+                    </span>
+                  </label>
                   <div class="input-container">
                     <input type="text" id="curp" name="curp" class="form-input" 
                            placeholder="Ej. PEAJ800101HDFLRN01" 
@@ -211,6 +382,8 @@
                     <span class="input-valid-icon"><i class="fas fa-check"></i></span>
                   </div>
                   <small id="curpHelp" class="form-hint">Formato: 4 letras, 6 números, H/M, 5 letras, 2 alfanuméricos</small>
+                  <!-- 🔥 NUEVO: Mensaje de error -->
+                  <div id="curp-error" class="error-message" role="alert">Por favor ingresa una CURP válida</div>
                 </div>
 
                 <div class="form-group">
@@ -223,6 +396,8 @@
                     <span class="input-valid-icon"><i class="fas fa-check"></i></span>
                   </div>
                   <small id="phoneHelp" class="form-hint">10 dígitos sin espacios ni guiones</small>
+                  <!-- 🔥 NUEVO: Mensaje de error -->
+                  <div id="phone-error" class="error-message" role="alert">Por favor ingresa un teléfono válido</div>
                 </div>
               </fieldset>
             </form>
@@ -266,6 +441,11 @@
                   </div>
                 </div>
 
+                <!-- 🔥 NUEVO: Indicador de progreso -->
+                <div id="numbersProgress" class="numbers-progress">
+                  Llevas <span id="enteredNumbers">0</span>/<span id="totalNumbers">1</span> números ingresados
+                </div>
+
                 <div class="number-inputs-container" id="numberInputsContainer">
                   <!-- Generado dinámicamente por JavaScript -->
                 </div>
@@ -280,6 +460,8 @@
                     <a href="#privacyModal" class="terms-link">política de privacidad</a>*
                   </span>
                 </label>
+                <!-- 🔥 NUEVO: Mensaje de error -->
+                <div id="terms-error" class="error-message" role="alert">Debes aceptar los términos y condiciones</div>
               </div>
 
               <div class="form-actions">
@@ -288,6 +470,15 @@
                   <span class="btn-text">Participar ahora</span>
                   <i class="fas fa-arrow-right btn-icon" aria-hidden="true"></i>
                 </button>
+                
+                <!-- 🔥 NUEVO: Botón para limpiar formulario -->
+                <button type="button" class="btn btn-clear" id="clearFormBtn">
+                  <i class="fas fa-broom" aria-hidden="true"></i>
+                  Limpiar formulario
+                </button>
+                
+                <!-- 🔥 NUEVO: Loader -->
+                <div class="loader" id="formLoader"></div>
                 
                 <div id="payment-button" class="mercado-pago-container hidden"></div>
                 
@@ -339,6 +530,14 @@
             </div>
             
             <!-- Más ganadores generados por JavaScript -->
+          </div>
+          
+          <!-- 🔥 NUEVO: Estado vacío -->
+          <div id="noWinnersMessage" class="empty-state" style="display: none;">
+            <i class="fas fa-trophy" style="font-size: 3rem; color: #ddd;"></i>
+            <h3>Aún no hay ganadores registrados</h3>
+            <p>Sé el primero en ganar nuestro premio diario</p>
+            <a href="#participar" class="btn btn-secondary">Participar ahora</a>
           </div>
           
           <button class="carousel-control prev" aria-label="Ganadores anteriores">
@@ -533,6 +732,14 @@
     </div>
   </div>
 
+  <!-- 🔥 NUEVO: Confetti canvas -->
+  <canvas id="confetti" class="confetti"></canvas>
+  
+  <!-- 🔥 NUEVO: Botón dark mode -->
+  <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Alternar modo oscuro">
+    <i class="fas fa-moon"></i>
+  </button>
+
   <!-- SCRIPTS MEJORADOS -->
   <script src="https://sdk.mercadopago.com/js/v2"></script>
   
@@ -558,7 +765,11 @@
       // Manejo de los radio buttons para cantidad
       document.querySelectorAll('input[name="amount"]').forEach(radio => {
         radio.addEventListener('change', e => {
-          updateNumberInputs(e.target.value === '20' ? 1 : 5);
+          const count = e.target.value === '20' ? 1 : 5;
+          updateNumberInputs(count);
+          document.getElementById('totalNumbers').textContent = count;
+          document.getElementById('enteredNumbers').textContent = 0;
+          document.getElementById('numbersProgress').style.display = 'block';
         });
       });
       
@@ -581,10 +792,126 @@
               <span class="input-valid-icon"><i class="fas fa-check"></i></span>
             </div>
             <small id="numberHelp${i}" class="form-hint">4 dígitos (0000-9999)</small>
+            <!-- 🔥 NUEVO: Mensaje de error -->
+            <div id="number-error-${i}" class="error-message" role="alert">Por favor ingresa un número válido</div>
           `;
           container.appendChild(group);
         }
+        
+        // Mostrar progreso
+        document.getElementById('totalNumbers').textContent = count;
+        document.getElementById('numbersProgress').style.display = 'block';
       }
+      
+      // 🔥 NUEVO: Actualizar contador de números ingresados
+      document.addEventListener('input', (e) => {
+        if (e.target.classList.contains('number-input')) {
+          const entered = Array.from(document.querySelectorAll('.number-input'))
+            .filter(input => input.value.length === 4).length;
+          document.getElementById('enteredNumbers').textContent = entered;
+        }
+      });
+      
+      // 🔥 NUEVO: Validación mejorada del formulario
+      function validateForm() {
+        let isValid = true;
+        
+        // Validar nombre
+        const nameInput = document.getElementById('name');
+        const nameError = document.getElementById('name-error');
+        
+        if (!nameInput.checkValidity()) {
+          nameInput.parentElement.parentElement.classList.add('has-error');
+          nameError.style.display = 'block';
+          isValid = false;
+        } else {
+          nameInput.parentElement.parentElement.classList.remove('has-error');
+          nameError.style.display = 'none';
+        }
+        
+        // Validar CURP
+        const curpInput = document.getElementById('curp');
+        const curpError = document.getElementById('curp-error');
+        
+        if (!curpInput.checkValidity()) {
+          curpInput.parentElement.parentElement.classList.add('has-error');
+          curpError.style.display = 'block';
+          isValid = false;
+        } else {
+          curpInput.parentElement.parentElement.classList.remove('has-error');
+          curpError.style.display = 'none';
+        }
+        
+        // Validar teléfono
+        const phoneInput = document.getElementById('phone');
+        const phoneError = document.getElementById('phone-error');
+        
+        if (!phoneInput.checkValidity()) {
+          phoneInput.parentElement.parentElement.classList.add('has-error');
+          phoneError.style.display = 'block';
+          isValid = false;
+        } else {
+          phoneInput.parentElement.parentElement.classList.remove('has-error');
+          phoneError.style.display = 'none';
+        }
+        
+        // Validar números de rifa
+        const numberInputs = document.querySelectorAll('.number-input');
+        numberInputs.forEach((input, index) => {
+          const errorElement = document.getElementById(`number-error-${index}`);
+          if (!input.checkValidity()) {
+            input.parentElement.parentElement.classList.add('has-error');
+            if (errorElement) errorElement.style.display = 'block';
+            isValid = false;
+          } else {
+            input.parentElement.parentElement.classList.remove('has-error');
+            if (errorElement) errorElement.style.display = 'none';
+          }
+        });
+        
+        // Validar términos
+        const termsInput = document.getElementById('terms');
+        const termsError = document.getElementById('terms-error');
+        
+        if (!termsInput.checked) {
+          termsError.style.display = 'block';
+          isValid = false;
+        } else {
+          termsError.style.display = 'none';
+        }
+        
+        return isValid;
+      }
+      
+      // 🔥 NUEVO: Manejo del envío del formulario
+      document.getElementById('raffleForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        if (validateForm()) {
+          const loader = document.getElementById('formLoader');
+          const submitBtn = document.getElementById('submitBtn');
+          
+          submitBtn.disabled = true;
+          loader.style.display = 'block';
+          
+          // Simular envío
+          setTimeout(() => {
+            loader.style.display = 'none';
+            showConfetti();
+            document.getElementById('paymentModal').hidden = false;
+            submitBtn.disabled = false;
+          }, 2000);
+        }
+      });
+      
+      // 🔥 NUEVO: Limpiar formulario
+      document.getElementById('clearFormBtn').addEventListener('click', () => {
+        document.getElementById('raffleForm').reset();
+        const count = document.querySelector('input[name="amount"]:checked').value === '20' ? 1 : 5;
+        updateNumberInputs(count);
+        document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.form-group').forEach(el => el.classList.remove('has-error'));
+      });
       
       // Manejo básico del modal de términos
       const termsLink = document.getElementById('termsLink');
@@ -605,7 +932,96 @@
       
       modalClose.addEventListener('click', closeModal);
       modalOverlay.addEventListener('click', closeModal);
+      
+      // 🔥 NUEVO: Dark mode toggle
+      const darkModeToggle = document.getElementById('darkModeToggle');
+      const htmlElement = document.documentElement;
+      
+      darkModeToggle.addEventListener('click', () => {
+        htmlElement.classList.toggle('dark-mode');
+        const isDark = htmlElement.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        darkModeToggle.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      });
+      
+      // Verificar preferencia almacenada
+      if (localStorage.getItem('darkMode') === 'true') {
+        htmlElement.classList.add('dark-mode');
+        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+      }
+      
+      // 🔥 NUEVO: Verificar si hay ganadores para mostrar estado vacío
+      function checkWinners() {
+        const winnerList = document.getElementById('winnerList');
+        const noWinnersMessage = document.getElementById('noWinnersMessage');
+        
+        if (winnerList.children.length === 0) {
+          noWinnersMessage.style.display = 'block';
+        } else {
+          noWinnersMessage.style.display = 'none';
+        }
+      }
+      
+      // Llamar esta función después de cargar los ganadores
+      checkWinners();
     });
+    
+    // 🔥 NUEVO: Función para mostrar confeti
+    function showConfetti() {
+      const confetti = document.getElementById('confetti');
+      confetti.style.display = 'block';
+      
+      // Configuración básica del confeti (necesitarías una librería para mejor efecto)
+      const ctx = confetti.getContext('2d');
+      confetti.width = window.innerWidth;
+      confetti.height = window.innerHeight;
+      
+      // Simular confeti simple
+      const particles = [];
+      for (let i = 0; i < 150; i++) {
+        particles.push({
+          x: Math.random() * confetti.width,
+          y: Math.random() * confetti.height - confetti.height,
+          size: Math.random() * 10 + 5,
+          color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+          speed: Math.random() * 3 + 2,
+          angle: Math.random() * Math.PI * 2
+        });
+      }
+      
+      function animate() {
+        ctx.clearRect(0, 0, confetti.width, confetti.height);
+        
+        let stillActive = false;
+        particles.forEach(particle => {
+          particle.y += particle.speed;
+          particle.x += Math.sin(particle.angle) * 1.5;
+          particle.angle += 0.01;
+          
+          ctx.fillStyle = particle.color;
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fill();
+          
+          if (particle.y < confetti.height) {
+            stillActive = true;
+          }
+        });
+        
+        if (stillActive) {
+          requestAnimationFrame(animate);
+        } else {
+          confetti.style.display = 'none';
+        }
+      }
+      
+      animate();
+      
+      // Ocultar después de 5 segundos
+      setTimeout(() => {
+        confetti.style.display = 'none';
+      }, 5000);
+    }
     
     // Inicialización básica del contador
     function updateCountdown() {
